@@ -1,0 +1,11 @@
+diff a/CSharpHW/Calk/Calk/Program.cs b/CSharpHW/Calk/Calk/Program.cs	(rejected hunks)
+@@ -18,8 +18,7 @@
+             }
+ 
+             int number = 0;
+-            ConsoleKeyInfo key;
+-            key = Console.ReadKey();
++
+             do
+             {
+                 Console.WriteLine("Please write the first number and click enter");

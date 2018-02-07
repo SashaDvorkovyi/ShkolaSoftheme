@@ -1,0 +1,21 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <TextBox x:Name="enter" HorizontalAlignment="Left" Height="23" Margin="104,113,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left"  Margin="104,66,0,0" TextWrapping="Wrap" Text="Guess a random number from 1 to 10" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="output" HorizontalAlignment="Left" IsReadOnly="True" Height="23" Margin="295,113,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="295,82,0,0" TextWrapping="Wrap" Text="Random number is" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="clik" Content="Clik" HorizontalAlignment="Left" Margin="104,252,0,0" VerticalAlignment="Top" Width="75" Click="clik_Click"/>
+        <TextBlock HorizontalAlignment="Left" Margin="104,148,0,0" TextWrapping="Wrap" Text="Number of attempts" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="attempt" HorizontalAlignment="Left" IsReadOnly="True" Height="23" Margin="104,209,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="39" Text="3"/>
+        <TextBox x:Name="congratulation" HorizontalAlignment="Left" IsReadOnly="True" Height="25" Margin="295,177,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="189"/>
+        <TextBlock HorizontalAlignment="Left" Margin="295,216,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="189" Height="56"><Run Text="If you do not guess for 3 drinks a random number will be changed"/><Run Text="."/></TextBlock>
+
+    </Grid>
+</Window>
