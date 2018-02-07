@@ -71,7 +71,7 @@ namespace data
                     break;
                 }
             }
-            if ((firstN.Text!="")&& (lastN.Text != "")&& (int.Parse(birthD.Text)>0) && (int.Parse(birthD.Text) < 32) && (int.Parse(birthM.Text) > 0) && (int.Parse(birthM.Text) <13) && (int.Parse(birthY.Text) > 1900) && (int.Parse(birthY.Text) < DateTime.Now.Year) && (phone.Text != "") && (emailStr != null) && (gender.Text != null))
+            if ((firstN.Text!="")&& (lastN.Text != "") && (birthD.Text != "") && (birthM.Text != "") && (birthY.Text != "") && (int.Parse(birthD.Text)>0) && (int.Parse(birthD.Text) < 32) && (int.Parse(birthM.Text) > 0) && (int.Parse(birthM.Text) <13) && (int.Parse(birthY.Text) > 1900) && (int.Parse(birthY.Text) < DateTime.Now.Year) && (phone.Text != "") && (emailStr != null) && (gender.Text != null))
             {
                 List<string> user = new List<string>();
                 user.Add(firstN.Text);
