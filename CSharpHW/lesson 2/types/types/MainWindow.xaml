@@ -5,28 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:types"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="674.733">
     <Grid>
         <RadioButton x:Name="_byte" Content="byte" HorizontalAlignment="Left" Margin="27,26,0,0" VerticalAlignment="Top"/>
         <Button Content="show" HorizontalAlignment="Left" Margin="116,21,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-        <TextBox x:Name="max" HorizontalAlignment="Left" Height="23" Margin="361,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="max" HorizontalAlignment="Left" Height="23" Margin="298,19,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="335"/>
         <RadioButton x:Name="_long" Content="long" HorizontalAlignment="Left" Margin="27,146,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="_uint" Content="uint" HorizontalAlignment="Left" Margin="27,126,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="_int" Content="int" HorizontalAlignment="Left" Margin="27,106,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="_ushort" Content="ushort" HorizontalAlignment="Left" Margin="27,86,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="_short" Content="short" HorizontalAlignment="Left" Margin="27,66,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="_sbyte" Content="sbyte" HorizontalAlignment="Left" Margin="27,46,0,0" VerticalAlignment="Top"/>
-        <RadioButton x:Name="_bool" Content="bool" HorizontalAlignment="Left" Margin="27,246,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="_decimal" Content="decimal" HorizontalAlignment="Left" Margin="27,226,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="_double" Content="double" HorizontalAlignment="Left" Margin="27,206,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="_float" Content="float" HorizontalAlignment="Left" Margin="27,186,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="_ulong" Content="ulong" HorizontalAlignment="Left" Margin="27,166,0,0" VerticalAlignment="Top"/>
-        <RadioButton x:Name="_string" Content="string" HorizontalAlignment="Left" Margin="27,266,0,0" VerticalAlignment="Top" Checked="_bool_Copy_Checked"/>
-        <TextBlock HorizontalAlignment="Left" Margin="279,21,0,0" TextWrapping="Wrap" Text="Max:" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="279,111,0,0" TextWrapping="Wrap" Text="Min:" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="279,65,0,0" TextWrapping="Wrap" Text="Default:" VerticalAlignment="Top"/>
-        <TextBox x:Name="min" HorizontalAlignment="Left" Height="23" Margin="361,110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="def" HorizontalAlignment="Left" Height="23" Margin="361,65,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="217,21,0,0" TextWrapping="Wrap" Text="Max value:" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="217,113,0,0" TextWrapping="Wrap" Text="Min value:" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="217,66,0,0" TextWrapping="Wrap" Text="Default value:" VerticalAlignment="Top"/>
+        <TextBox x:Name="min" HorizontalAlignment="Left" Height="23" Margin="298,113,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="335"/>
+        <TextBox x:Name="def" HorizontalAlignment="Left" Height="23" Margin="298,66,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="335"/>
 
     </Grid>
 </Window>
