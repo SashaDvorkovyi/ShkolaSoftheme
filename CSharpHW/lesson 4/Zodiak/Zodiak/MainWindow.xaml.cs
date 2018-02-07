@@ -32,6 +32,10 @@ namespace Zodiak
         List<string> message;
         private void batton_Click(object sender, RoutedEventArgs e)
         {
+            StreamResourceInfo resInfo = Application.GetResourceStream(new Uri("Resources/text.txt", UriKind.Relative));
+            StreamReader reader = new StreamReader(resInfo.Stream, System.Text.Encoding.Default);
+
+
             try
             {
                 var d = day.Text;
@@ -45,17 +49,25 @@ namespace Zodiak
                 {
                     daysInt = result;
                 }
+                else
+                {
+                    MessageBox.Show("Input Error");
+                }
                 if (int.TryParse(m, out int result1) && result1 < 13 && result1 > 0)
                 {
                     monthsInt = result1;
+                }
+                else
+                {
+                    MessageBox.Show("Input Error");
                 }
                 if (int.TryParse(y, out int result2) && result2 > 0)
                 {
                     yearInt = result2;
                 }
-                if (daysInt == 0 || monthsInt == 0 || yearInt == 0)
+                else
                 {
-                    discr.Text = "Sorry, but you were wrong";
+                    MessageBox.Show("Input Error");
                 }
                 string[] arreyZodiak = { "Resources/01_kozerog.jpg", "Resources/02_vodoley.jpg", "Resources/03_fish.jpg", "Resources/04_oven.jpg", "Resources/05_telec.jpg", "Resources/06_bleznec.jpg", "Resources/07_rak.jpg", "Resources/08_lev.jpg", "Resources/09_deva.jpg", "Resources/10_vesu.jpg", "Resources/11_skorpion.jpg", "Resources/12_strelec.jpg" };
                 string[] arreyYear = { "Resources/god_09_obeciana.jpg", "Resources/god_10_petux.jpg", "Resources/god_11_sobaka.jpg", "Resources/god_12_svinja.jpg", "Resources/god_01_krysa.jpg", "Resources/god_02_buk.jpg", "Resources/god_03_tigr.jpg", "Resources/god_04_krolik.jpg", "Resources/god_05_drakon.jpg", "Resources/god_06_zmeja.jpg", "Resources/god_07_loshad.jpg", "Resources/god_08_ovca.jpg" };
@@ -77,59 +89,48 @@ namespace Zodiak
                     znakImageAdd(arreyZodiak[0]);
                 }
 
+
                 yearImage.Source = new BitmapImage(new Uri(arreyYear[yearInt % 12], UriKind.Relative));
 
-                string luckyNumberString = d + m + y;
-                int luckydayEndMonth = daysInt + monthsInt;
-                int luckyYear = 0;
-                for (int i = 0; i < y.Length; i++)
-                {
-                    luckyYear += int.Parse(("0" + y[i]));
-                }
-                int lucky = luckydayEndMonth + luckyYear;
-                int luckyNamber = 0;
-                int luckyNamberLong = 0;
-                for (int i = 0; i < lucky.ToString().Length; i++)
-                {
-                    luckyNamberLong += int.Parse(("0" + lucky.ToString()[i]));
-                }
-                if (luckyNamberLong >= 10)
-                {
-                    for (int i = 0; i < luckyNamber.ToString().Length; i++)
-                    {
-                        luckyNamber += int.Parse(("0" + luckyNamberLong.ToString()[i]));
-                    }
-                }
-                else
-                {
-                    luckyNamber = luckyNamberLong;
-                }
 
+                while(daysInt >= 10)
+                {
+                    daysInt=int.Parse(daysInt.ToString()[0].ToString()) + int.Parse(daysInt.ToString()[1].ToString());
+                }
+                while (monthsInt >= 10)
+                {
+                    monthsInt = int.Parse(monthsInt.ToString()[0].ToString()) + int.Parse(monthsInt.ToString()[1].ToString());
+                }
+                var luckyDayEndMonth = daysInt + monthsInt;
+                var luckyYear = int.Parse(y[0].ToString()) + int.Parse(y[1].ToString()) + int.Parse(y[2].ToString()) + int.Parse(y[3].ToString());
+                while (luckyYear >= 10)
+                {
+                    luckyYear = int.Parse(luckyYear.ToString()[0].ToString()) + int.Parse(luckyYear.ToString()[1].ToString());
+                }
+                var luckyNamber = luckyDayEndMonth + luckyYear;
+                while (luckyNamber >= 10)
+                {
+                    luckyNamber = int.Parse(luckyNamber.ToString()[0].ToString()) + int.Parse(luckyNamber.ToString()[1].ToString());
+                }
                 luckyTextBox.Text = luckyNamber.ToString();
-                StreamResourceInfo resInfo = Application.GetResourceStream(new Uri("Resources/text.txt", UriKind.Relative));
-                StreamReader reader = new StreamReader(resInfo.Stream, System.Text.Encoding.Default);
+
+
+                var line = reader.ReadLine();
                 if (message == null)
                 {
                     message=new List<string>();
-                }
-                var line = reader.ReadLine();
-                //if (message[0] == null)
-                //{
                     while (line != null)
                     {
-
                         message.Add(line);
                         line = reader.ReadLine();
                     }
-                    reader.Close();
-                //}
-
+                }
                 int messageLong = message.Count;
 
                 string dataTimeNow = String.Format("{0}", DateTime.Now);
                 int numberData = int.Parse("" + dataTimeNow[0] + dataTimeNow[1]) + int.Parse("" + dataTimeNow[3] + dataTimeNow[4]);
                 int numberOfLine = 0;
-                int number = (numberData + luckydayEndMonth + luckyYear) * luckyNamber;
+                int number = (numberData + luckyDayEndMonth * luckyYear) * luckyNamber;
                 while (messageLong < number)
                 {
                     number -= messageLong;
@@ -141,7 +142,10 @@ namespace Zodiak
             catch(Exception)
             {
                 MessageBox.Show("Input Error");
-                
+            }
+            finally
+            {
+                reader.Close();
             }
         }
         private static int numberOfDays(int monthArg, int dayArg)
