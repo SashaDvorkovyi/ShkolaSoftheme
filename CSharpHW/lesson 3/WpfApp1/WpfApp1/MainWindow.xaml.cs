@@ -24,10 +24,12 @@ namespace WpfApp1
         {
             InitializeComponent();
         }
+        Random variable = new Random();
+        int rand = 0;
         private void clik_Click(object sender, RoutedEventArgs e)
         {
-            Random variable = new Random();
-            int rand = 0;
+
+
             try
             {
                 var i = int.Parse(attempt.Text);
