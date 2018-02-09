@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cars
 {
-    static class TuningAtelier
+    public static class TuningAtelier
     {
         public static void TuneCar(string color, Car obj)
         {
