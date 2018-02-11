@@ -15,6 +15,7 @@ namespace ShapeType
             var shapeDiscr1 = new ShapeDescriptor(point1, point2);
             Console.WriteLine("The form is: " + shapeDiscr1.ShapeType() + ". Area is:" + shapeDiscr1.Area());
 
+
             var point3 = new Point(2, 1);
             var point4 = new Point(4, 3);
             var point5 = new Point(5, 6);
