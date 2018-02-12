@@ -18,8 +18,7 @@ namespace Calk
             }
 
             int number = 0;
-            ConsoleKeyInfo key;
-            key = Console.ReadKey();
+
             do
             {
                 Console.WriteLine("Please write the first number and click enter");

@@ -20,7 +20,7 @@ namespace CarConstruct
 
             car1 = CarConstructor.Reconstruct(car1, "v4 turbo");
             Console.WriteLine("Car1: " + car1.color.color + ", " + car1.engine.engineName + ", " + car1.transmission.transmission);
-            car2 = CarConstructor.Reconstruct(car2, "v2 turbo");
+            car2 = CarConstructor.Reconstruct(car2, engine1);
             Console.WriteLine("Car2: " + car2.color.color + ", " + car2.engine.engineName + ", " + car2.transmission.transmission);
 
             Console.ReadKey();
