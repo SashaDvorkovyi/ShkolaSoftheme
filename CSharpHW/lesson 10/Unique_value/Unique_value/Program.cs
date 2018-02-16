@@ -12,7 +12,7 @@ namespace Unique_value
         {
             int[] arrey = new int[200001];
             int i = 0;
-            for (int t=0; t<20033; t++)
+            for (int t = 0; t < 20033; t++)
             {
                 arrey[i] = t;
                 i++;
@@ -28,6 +28,7 @@ namespace Unique_value
                 arrey[i] = t;
                 i++;
             }
+            //int[] arrey = {  0, 0, 4, 1, 1, 2, 2, 3, 3, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10 };
 
             int lastIndex = arrey.Length;
             int firstIndex = 0;
