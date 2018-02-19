@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Printer
 {
-    public class ColourPrinter : Printer
+    public sealed class ColourPrinter : Printer
     {
         public override void Print(string s)
         {
