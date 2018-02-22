@@ -31,13 +31,13 @@ namespace IUser
                     }
                     else if (item.Name == user.Name && item.Password == user.Password)
                     {
-                        user.LastEntryCheck();
                         resalt = user;
+                        user.LastEntryCheck();
                     }
                     else if (item.Email == user.Email && item.Password == user.Password)
                     {
-                        user.LastEntryCheck();
                         resalt = user;
+                        user.LastEntryCheck();
                     }
                 }
             }
