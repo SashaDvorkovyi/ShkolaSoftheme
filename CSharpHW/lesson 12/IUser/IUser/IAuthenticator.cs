@@ -8,7 +8,6 @@ namespace IUser
 {
     public interface IAuthenticator
     {
-        IUser AuthenticateUser( IUser user);
-        void AddUser(IUser user);
+        IUser AuthenticateUser(ref List<IUser> users, IUser user);
     }
 }

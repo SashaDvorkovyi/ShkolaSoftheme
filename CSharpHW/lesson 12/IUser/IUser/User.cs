@@ -37,7 +37,7 @@ namespace IUser
         }
         public void LastEntryCheck()
         {
-                _lastEntrance = DateTime.Now;
+            _lastEntrance = DateTime.Now;
         }
     }
 }

@@ -10,61 +10,89 @@ namespace IUser
     {
         static void Main(string[] args)
         {
-            Authenticator authenticator = new Authenticator();
-
+            List<IUser> users = new List<IUser>();
+            AuthenticatorNew authenticatorNew = new AuthenticatorNew();
+            AuthenticatorNoisyUsers authenticatorNoisyUsers = new AuthenticatorNoisyUsers();
+            bool exit = false;
             do
             {
+
                 Console.WriteLine("If you want to login click: 'l'. If you want to create a user, click: 'c'");
                 var loginOrCreate = (char)Console.ReadKey().Key;
                 switch (loginOrCreate)
                 {
                     case 'L':
                         Console.WriteLine();
-                        Console.WriteLine("Enter name of user or email of user end pres 'Enter'");
-                        var nameOrEmail = Console.ReadLine();
-                        Console.WriteLine("Enter passvord of user end pres 'Enter'");
-                        var password1 = Console.ReadLine();
-                        User userA = new User(nameOrEmail, password1, null);
-                        User userB = new User(null, password1, nameOrEmail);
-                        if (authenticator.AuthenticateUser((IUser)userA) != null)
+                        string[] withdraw = { "Enter name of user or email end pres 'Enter' or 'exit' to end", "Enter passvord of user end pres 'Enter' or 'exit' to end" };
+                        string[] inputs = new string[withdraw.Length];
+                        for (var i = 0; i < inputs.Length; i++)
                         {
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine(authenticator.AuthenticateUser((IUser)userA).GetFullInfo());
-                            Console.ResetColor();
+                            Console.WriteLine(withdraw[i]);
+                            var input = Console.ReadLine();
+                            if (string.Compare(input, "exit") == 0)
+                            {
+                                exit = true;
+                                break;
+                            }
+                            else
+                            {
+                                inputs[i] = input;
+                            }
                         }
-                        else if (authenticator.AuthenticateUser((IUser)userB) != null)
+                        if (inputs[1] != null)
                         {
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine(authenticator.AuthenticateUser((IUser)userB).GetFullInfo());
-                            Console.ResetColor();
+                            User userA = new User(inputs[0], inputs[1], null);
+                            User userB = new User(null, inputs[1], inputs[0]);
+                            if (authenticatorNoisyUsers.AuthenticateUser(ref users, userA) != null)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine(authenticatorNoisyUsers.AuthenticateUser(ref users, userA).GetFullInfo());
+                                Console.ResetColor();
+                            }
+                            else if(authenticatorNoisyUsers.AuthenticateUser(ref users, userB) != null)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine(authenticatorNoisyUsers.AuthenticateUser(ref users, userA).GetFullInfo());
+                                Console.ResetColor();
+                            }
+
                         }
                         break;
                     case 'C':
+
                         Console.WriteLine();
-                        Console.WriteLine("Enter name of user end pres 'Enter'");
-                        var name = Console.ReadLine();
-                        Console.WriteLine("Enter email of user end pres 'Enter'");
-                        var email = Console.ReadLine();
-                        Console.WriteLine("Enter passvord of user end pres 'Enter'");
-                        var password = Console.ReadLine();
-                        if (name != "" && name != " " && email != "" && email != " " && password != "" && password != " ")
+                        string[] withdraw1 = { "Enter name of user end pres 'Enter' or 'exit' to end", "Enter email of user end pres 'Enter' or 'exit' to end", "Enter passvord of user end pres 'Enter' or 'exit' to end" };
+                        string[] inputs1 = new string[withdraw1.Length];
+                        for (var i=0; i<inputs1.Length; i++)
                         {
-                            User user = new User(name, password, email);
-                            authenticator.AddUser(user);
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine(user.GetFullInfo());
-                            Console.ResetColor();
+                            Console.WriteLine(withdraw1[i]);
+                            var input = Console.ReadLine();
+                            if( string.Compare(input, "exit")==0)
+                            {
+                                exit = true;
+                                break;
+                            }
+                            else
+                            {
+                                inputs1[i] = input;
+                            }
                         }
-                        else
+                        if (inputs1[2] != null)
                         {
-                            Console.WriteLine("You entered the wrong data");
+                            User user = new User(inputs1[0], inputs1[2], inputs1[1]);
+                            if (authenticatorNew.AuthenticateUser(ref users, user) == null)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine(user.GetFullInfo());
+                                Console.ResetColor();
+                            }
+
                         }
                         break;
                 }
-                Console.WriteLine();
-                Console.WriteLine("If you want to exit click: 'Escape'. If you want to contine click something else.");
+
             }
-            while (Console.ReadKey().Key != ConsoleKey.Escape);
+            while (exit!=true);
 
         }
     }

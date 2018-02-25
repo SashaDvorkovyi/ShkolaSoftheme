@@ -42,7 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Authenticator.cs" />
+    <Compile Include="AuthenticatorNewUser.cs" />
+    <Compile Include="AuthenticatorNoisyUsers.cs" />
     <Compile Include="IAuthenticator.cs" />
     <Compile Include="IUser.cs" />
     <Compile Include="Program.cs" />
