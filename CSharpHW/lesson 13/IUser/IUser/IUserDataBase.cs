@@ -11,5 +11,6 @@ namespace IUser
         void AllUsersGet();
         void SearchUserName(string name);
         void AddUser(IUser user);
+
     }
 }

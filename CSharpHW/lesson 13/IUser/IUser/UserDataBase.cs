@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IUser
 {
-    public class UserDataBase : IUserDataBase, IDisposable
+    public class UserDataBase : IUserDataBase
     {
         private List<IUser> _users;
         private bool _disposed;
@@ -15,6 +15,11 @@ namespace IUser
         {
             _users = new List<IUser>();
         }
+
+        //~UserDataBase()
+        //{
+        //    this.Dispose();
+        //}
 
         public void AllUsersGet()
         {
@@ -65,7 +70,8 @@ namespace IUser
         {
             _users.Add(user);
         }
-        public void Dispose()
+
+        void IDisposable.Dispose()
         {
 
             if (!this._disposed)
@@ -79,6 +85,7 @@ namespace IUser
                 _users = null;
             }
             this._disposed = true;
+            GC.SuppressFinalize(this);
         }
     }
 }
