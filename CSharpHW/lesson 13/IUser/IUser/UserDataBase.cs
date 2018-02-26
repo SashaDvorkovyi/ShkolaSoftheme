@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IUser
 {
-    public class UserDataBase : IUserDataBase
+    public  class UserDataBase : IUserDataBase
     {
         private List<IUser> _users;
         private bool _disposed;
@@ -15,11 +15,6 @@ namespace IUser
         {
             _users = new List<IUser>();
         }
-
-        //~UserDataBase()
-        //{
-        //    this.Dispose();
-        //}
 
         public void AllUsersGet()
         {
