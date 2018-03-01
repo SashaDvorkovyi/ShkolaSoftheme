@@ -13,13 +13,14 @@
         <TextBlock HorizontalAlignment="Left" Margin="67,36,0,0" TextWrapping="Wrap" Text="Enter 6 numbers from 1 to 9." VerticalAlignment="Top" Width="156"/>
         <TextBlock HorizontalAlignment="Left" Margin="293,35,0,0" TextWrapping="Wrap" Text="Laky number is:" VerticalAlignment="Top" Width="156"/>
         <Button x:Name="Clean" Content="Clean" HorizontalAlignment="Left" Margin="374,105,0,0" VerticalAlignment="Top" Width="75" Click="Clean_Click"/>
-        <RichTextBox x:Name="Info" HorizontalAlignment="Left" Height="111" Margin="67,169,0,0" VerticalAlignment="Top" Width="383">
+        <RichTextBox x:Name="Info" HorizontalAlignment="Left" Height="111" Margin="67,182,0,0" VerticalAlignment="Top" Width="169">
             <FlowDocument>
                 <Paragraph>
                     <Run Text=""/>
                 </Paragraph>
             </FlowDocument>
         </RichTextBox>
+        <TextBox x:Name="Info1" HorizontalAlignment="Left" Height="90" Margin="295,193,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="163"/>
 
     </Grid>
 </Window>

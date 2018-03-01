@@ -20,6 +20,7 @@ namespace Lottery
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
@@ -37,14 +38,24 @@ namespace Lottery
             }
             else
             {
-                Info.Text = "Sorry, but you entered a number that does not match the required parameters.";
-                RichTextBox.TextChangedEvent.
+                Info1.Text = "Sorry, but you entered a number that does not match the required parameters.";
+
             }
+            //string mystring = @"my first string";
+
+            //if (richTextBox1.Find(mystring) > 0)
+            //{
+            //    int my1stPosition = Info.Find(mystring);
+            //    Info.SelectionBrush = Brushes.Blue;
+            //    Info.Leng = mystring.Length;
+            //    Info.SelectionColor = Color.DarkCyan;
+            //}
         }
 
         private void Clean_Click(object sender, RoutedEventArgs e)
         {
-
+            Log(Info, "Serial com1 is open...\r", Brushes.Blue);
+            Log(Info, "Serial com1 is open...\r", Brushes.Pink);
         }
         public static bool Validator(string str)
         {
@@ -82,17 +93,28 @@ namespace Lottery
             {
                 if (int.Parse(ob[i].ToString()) == int.Parse(str[i].ToString()))
                 {
-                    Info.Foreground = Brushes.Green;
-                    Info.Text += str[i].ToString();
+                    Info1.Foreground = Brushes.Green;
+                    Info1.Text += str[i].ToString();
                 }
                 else
                 {
-                    Info.Foreground = Brushes.Red;
-                    Info.Text += str[i].ToString();
+                    Info1.Foreground = Brushes.Red;
+                    Info1.Text += str[i].ToString();
                 }
             }
 
             
+        }
+        public void Log(RichTextBox box1, string msg, object color)//Здесь у обжект будем передавать цвет Brushes.Color!!!
+        {
+            box1.Dispatcher.Invoke(new Action(() =>
+            {
+                TextRange range = new TextRange(box1.Document.ContentEnd, box1.Document.ContentEnd);
+                range.Text = msg;
+                range.ApplyPropertyValue(TextElement.ForegroundProperty, color);
+                box1.ScrollToEnd();// функция Autoscroll
+            }));
+
         }
     }
 }
