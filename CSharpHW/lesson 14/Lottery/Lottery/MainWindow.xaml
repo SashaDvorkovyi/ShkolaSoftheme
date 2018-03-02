@@ -7,20 +7,20 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <TextBox x:Name="Input" HorizontalAlignment="Left" Height="23" Margin="67,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="156"/>
-        <TextBox x:Name="OutPut" HorizontalAlignment="Left" Height="23" IsReadOnly="True" Margin="293,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="157"/>
-        <Button x:Name="Enter" Content="Enter" HorizontalAlignment="Left" Margin="220,105,0,0" VerticalAlignment="Top" Width="75" Click="Enter_Click"/>
+        <TextBox x:Name="Input" HorizontalAlignment="Left" Height="34" Margin="67,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="156" FontSize="18"/>
+        <Button x:Name="Enter" Content="Enter" HorizontalAlignment="Left" Margin="220,105,0,0" VerticalAlignment="Top" Width="75" Click="Enter_Click" />
         <TextBlock HorizontalAlignment="Left" Margin="67,36,0,0" TextWrapping="Wrap" Text="Enter 6 numbers from 1 to 9." VerticalAlignment="Top" Width="156"/>
         <TextBlock HorizontalAlignment="Left" Margin="293,35,0,0" TextWrapping="Wrap" Text="Laky number is:" VerticalAlignment="Top" Width="156"/>
         <Button x:Name="Clean" Content="Clean" HorizontalAlignment="Left" Margin="374,105,0,0" VerticalAlignment="Top" Width="75" Click="Clean_Click"/>
-        <RichTextBox x:Name="Info" HorizontalAlignment="Left" Height="111" Margin="67,182,0,0" VerticalAlignment="Top" Width="169">
+        <RichTextBox x:Name="OutPut" HorizontalAlignment="Left" Height="34" Margin="295,56,0,0" VerticalAlignment="Top"  Width="163" IsReadOnly="True" Background="White" TextChanged="Info_TextChanged" FontSize="18" FontWeight="Bold" FontStyle="Italic">
             <FlowDocument>
                 <Paragraph>
-                    <Run Text=""/>
+                    <Run/>
                 </Paragraph>
             </FlowDocument>
         </RichTextBox>
-        <TextBox x:Name="Info1" HorizontalAlignment="Left" Height="90" Margin="295,193,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="163"/>
+        <TextBox x:Name="Info1" HorizontalAlignment="Left" Height="72" Margin="67,193,0,0" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Top" Width="391" FontSize="14"/>
+        <TextBlock HorizontalAlignment="Left" Margin="67,172,0,0" TextWrapping="Wrap" Text="Info:" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

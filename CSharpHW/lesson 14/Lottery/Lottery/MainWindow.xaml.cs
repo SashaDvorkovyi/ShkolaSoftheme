@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 
 namespace Lottery
 {
@@ -25,37 +26,38 @@ namespace Lottery
         {
             InitializeComponent();
         }
-        double[] Chance = { 1.5, 5.5, 36.46, 437.4, 9841.5, 531441};
+        string[] Chance = { "You have not guessed any value (((",
+            "The chance to guess one value is 2 to 3.",
+            "The chance to guess two times is 1 to 6",
+            "The chance to guess three times is 1 to 36",
+            "The chance to guess four times is 1 to 437",
+            "The chance to guess five times is 1 to 9841",
+            "The chance to guess six times is 1 to 531441" };
         LuckyNumber obj = new LuckyNumber();
 
         private void Enter_Click(object sender, RoutedEventArgs e)
         {
+            obj.LukyNumberGenerate();
             var inputNumber = Input.Text;
+
             if (Validator(inputNumber))
             {
-                CompareAndPrint(inputNumber, obj, Chance);
-                OutPut.Text = obj.LukyNumberIs;
+                OutPut.Document.Blocks.Clear();
+                Info1.Clear();
+                Print(inputNumber, obj, Chance);
             }
             else
             {
-                Info1.Text = "Sorry, but you entered a number that does not match the required parameters.";
-
+                OutPut.Document.Blocks.Clear();
+                Info1.Text= "Sorry, but you entered a number that does not match the required parameters.";
             }
-            //string mystring = @"my first string";
-
-            //if (richTextBox1.Find(mystring) > 0)
-            //{
-            //    int my1stPosition = Info.Find(mystring);
-            //    Info.SelectionBrush = Brushes.Blue;
-            //    Info.Leng = mystring.Length;
-            //    Info.SelectionColor = Color.DarkCyan;
-            //}
         }
 
         private void Clean_Click(object sender, RoutedEventArgs e)
         {
-            Log(Info, "Serial com1 is open...\r", Brushes.Blue);
-            Log(Info, "Serial com1 is open...\r", Brushes.Pink);
+            OutPut.Document.Blocks.Clear();
+            Input.Clear();
+            Info1.Clear();
         }
         public static bool Validator(string str)
         {
@@ -87,33 +89,41 @@ namespace Lottery
             return ansver;
         }
 
-        public void CompareAndPrint(string str, LuckyNumber ob, double[] array)
+        public void Print(string str, LuckyNumber ob, string[] array)
         {
+            
+            var coincided = default(int);
             for (var i = 0; i < LuckyNumber.Lenght; i++)
             {
-                if (int.Parse(ob[i].ToString()) == int.Parse(str[i].ToString()))
+                if (string.Compare(ob[i].ToString(),str[i].ToString())==0)
                 {
-                    Info1.Foreground = Brushes.Green;
-                    Info1.Text += str[i].ToString();
+                    //Thread.Sleep(300);
+                    ColorText(ob[i].ToString(), OutPut, Brushes.Green);
+                    coincided++;
                 }
                 else
                 {
-                    Info1.Foreground = Brushes.Red;
-                    Info1.Text += str[i].ToString();
+                    //Thread.Sleep(300);
+                    ColorText(ob[i].ToString(), OutPut, Brushes.Red);
                 }
             }
-
-            
+            Info1.Text = array[coincided];
         }
-        public void Log(RichTextBox box1, string msg, object color)//Здесь у обжект будем передавать цвет Brushes.Color!!!
+
+        public void ColorText(string msg, RichTextBox box1,  object color)
         {
             box1.Dispatcher.Invoke(new Action(() =>
             {
+                //Thread.Sleep(300);
                 TextRange range = new TextRange(box1.Document.ContentEnd, box1.Document.ContentEnd);
                 range.Text = msg;
                 range.ApplyPropertyValue(TextElement.ForegroundProperty, color);
-                box1.ScrollToEnd();// функция Autoscroll
             }));
+
+        }
+
+        private void Info_TextChanged(object sender, TextChangedEventArgs e)
+        {
 
         }
     }

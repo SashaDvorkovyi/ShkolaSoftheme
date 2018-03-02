@@ -25,7 +25,8 @@ namespace Lottery
         public string LukyNumberGenerate()
         {
             var variable = new Random();
-            for(var i=0; i<Lenght; i++)
+            LukyNumberIs = string.Empty;
+            for (var i=0; i<Lenght; i++)
             {
                 var number = variable.Next(1, 9);
                 LukyNumberIs += number.ToString();
