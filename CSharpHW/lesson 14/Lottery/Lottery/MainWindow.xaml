@@ -16,6 +16,8 @@
             <FlowDocument>
                 <Paragraph>
                     <Run/>
+                    <LineBreak/>
+                    <Run Background="LightBlue">Text run 2.</Run>
                 </Paragraph>
             </FlowDocument>
         </RichTextBox>
