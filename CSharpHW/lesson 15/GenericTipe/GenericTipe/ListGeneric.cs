@@ -22,6 +22,22 @@ namespace GenericTipe
             }
         }
 
+        public T this[int index]
+        {
+            get =>_array[index]; 
+            set
+            {
+                if (index < _lenght)
+                {
+                    _array[index] = value;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+        }
+
         public void AddElement(params T[] element)
         {
             if (_lenght + element.Length > _array.Length)
@@ -47,17 +63,7 @@ namespace GenericTipe
             }
 
         }
-        public void DeleteElement(int elementNumber)
-        {
-            if (0 < elementNumber && elementNumber < _lenght)
-            {
-                for(var i=elementNumber; i<_lenght; i++)
-                {
-                    _array[i - 1] = _array[i];
-                }
-                _lenght--;
-            }
-        }
+
         public void DeleteElement(T obj)
         {
             for(var i =0; i<_lenght; i++)
@@ -73,6 +79,27 @@ namespace GenericTipe
                 }
             }
         }
+
+        public void DeleteElement(int elementNumber)
+        {
+            if (0 < elementNumber && elementNumber < _lenght)
+            {
+                for (var i = elementNumber; i < _lenght; i++)
+                {
+                    _array[i - 1] = _array[i];
+                }
+                _lenght--;
+            }
+        }
+
+        //public void [int i].DeleteElement()
+        //{
+        //}
+
+        //public void DeleteElement(ListGeneric<T> obj[int i])
+        //{
+        //}
+
         public int Lenght() => _lenght;
 
         public bool Equals(T obj)

@@ -16,8 +16,9 @@ namespace GenericTipe
             Console.WriteLine(obj.Lenght());
             obj.DeleteElement(10);
             Console.WriteLine(obj.Lenght());
-            obj.DeleteElement(10);
-            Console.WriteLine(obj.Lenght());
+            //obj[11].DeleteElement();
+            //obj.DeleteElement(obj[11]);
+            //Console.WriteLine(obj.Lenght());
             Console.WriteLine(obj.Equals(11));
             int[] array2 = obj.ToArray();
             Console.WriteLine();
