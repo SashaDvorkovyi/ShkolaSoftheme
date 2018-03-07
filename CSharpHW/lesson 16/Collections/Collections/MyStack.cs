@@ -14,10 +14,24 @@ namespace Collections
         public MyStack(params T[] elements)
         {
             _array = new T[elements.Length * 2];
+            for (int i = 0; i < elements.Length; i++)
+            {
+                _array[i] = elements[i];
+            }
             _lastElement = elements.Length;
         }
 
-        public T Pop() => _lastElement != 0 ? _array[_lastElement-- - 1] : default(T);
+        public T Pop()
+        {
+            var resalt = default(T);
+            if(_lastElement != 0)
+            {
+                resalt = _array[_lastElement - 1];
+                _array[_lastElement - 1] = default(T);
+                _lastElement--;
+            }
+            return resalt;
+        }
 
         public void Push(T element)
         {

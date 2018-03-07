@@ -14,6 +14,10 @@ namespace Collections
         public MyQueue(params T[] elements)
         {
             _array = new T[elements.Length*2];
+            for(int i=0; i<elements.Length; i++)
+            {
+                _array[i] = elements[i];
+            }
             _lastElement = elements.Length;
         }
 
@@ -27,6 +31,7 @@ namespace Collections
                 {
                     _array[i - 1] = _array[i];
                 }
+                _array[_lastElement] = default(T);
                 _lastElement--;
             }
             return ansver;
