@@ -20,28 +20,14 @@ namespace Mobile_operator
 
         public void AcceptAndSend(object sender, EEventArgs e)
         {
-            var account = sender as MobileAccount;
-            if (account != null)
+            foreach (var item in listAccount)
             {
-                foreach (var item in listAccount)
+                if (e.Number == item.Number)
                 {
-                    if (account.Number == item.Number)
-                    {
-                        if (e.Message != null)
-                        {
-                            item.MessageEvent += item.Show;
-                        }
-                        else
-                        {
-                            item.CallEvent+= item.Show;
-                        }
-                    }
+                    item.Show(sender, e);
+                    break;
                 }
             }
-
         }
-                    
-
-
     }
 }
