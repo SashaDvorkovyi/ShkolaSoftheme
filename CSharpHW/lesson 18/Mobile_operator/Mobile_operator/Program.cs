@@ -11,19 +11,19 @@ namespace Mobile_operator
         static void Main(string[] args)
         {
             var mobileOperator = new MobileOperator();
-            mobileOperator.listAccount.Add(new MobileAccount(1234567));
-            mobileOperator.listAccount.Add(new MobileAccount(1111111));
-            mobileOperator.listAccount.Add(new MobileAccount(2222222));
-            mobileOperator.listAccount.Add(new MobileAccount(3333333));
-            mobileOperator.listAccount.Add(new MobileAccount(4444444));
-            mobileOperator.listAccount.Add(new MobileAccount(5555555));
-            mobileOperator.listAccount.Add(new MobileAccount(6666666));
-            foreach(var item in mobileOperator.listAccount)
-            {
-                item.MessageEvent += mobileOperator.AcceptAndSend;
-                item.CallEvent+= mobileOperator.AcceptAndSend;
-            }
-            mobileOperator.listAccount[1].Call(2222222);
+            mobileOperator.AddAAccount(111);
+            mobileOperator.AddAAccount(222);
+            mobileOperator.AddAAccount(333);
+            mobileOperator.AddAAccount(444);
+            mobileOperator.AddAAccount(555);
+            mobileOperator.AddAAccount(666);
+            mobileOperator.AddAAccount(777);
+            mobileOperator.AddAAccount(888);
+            mobileOperator.AddAAccount(999);
+
+            mobileOperator.TakeAccount(222).addressBook.Add(111, "Artem");
+            mobileOperator.TakeAccount(111).Call(222);
+            mobileOperator.TakeAccount(111).SendMessage(222, "hello");
             Console.ReadKey();
 
         }

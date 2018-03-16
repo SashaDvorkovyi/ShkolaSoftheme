@@ -39,28 +39,37 @@ namespace Mobile_operator
 
         public void Show(object sender, EEventArgs e)
         {
-            Console.WriteLine("This telephone have number" + this.Number);
+            Console.Write("This telephone have number: ");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(this.Number);
+            Console.ResetColor();
             var account = sender as MobileAccount;
+            if (e.Message != null)
+            {
+                Console.Write("Message text: ");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine(e.Message);
+                Console.ResetColor();
+                Console.Write("Message from: ");
+            }
+            else
+            {
+                Console.Write("Coll from: ");
+            }
             if (account != null)
             {
-                foreach(var item in addressBook)
+                foreach (var item in addressBook)
                 {
                     if (account.Number == item.Key)
                     {
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine(item.Value);
                     }
                 }
             }
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(account.Number);
-            if (e.Message != null)
-            {
-                Console.WriteLine(e.Message);
-            }
-            else
-            {
-                Console.WriteLine("Coll");
-            }
-            
+            Console.ResetColor();
         }
     }
 }
