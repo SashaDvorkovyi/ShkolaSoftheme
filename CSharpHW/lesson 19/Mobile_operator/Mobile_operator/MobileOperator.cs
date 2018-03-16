@@ -11,10 +11,14 @@ namespace Mobile_operator
 
 
         private List<MobileAccount> _listAccount;
+        private List<int[]> _magazine;
+
+
 
         public MobileOperator()
         {
             _listAccount = new List<MobileAccount>();
+            _magazine = new List<int[]>();
         }
 
         public bool AddAAccount(int number)
@@ -64,14 +68,39 @@ namespace Mobile_operator
 
         public void AcceptAndSend(object sender, EEventArgs e)
         {
-            foreach (var item in _listAccount)
+            var account = sender as MobileAccount;
+            if (account != null)
             {
-                if (e.Number == item.Number)
+                foreach (var item in _listAccount)
                 {
-                    item.Show(sender, e);
-                    break;
+                    if (e.Number == item.Number)
+                    {
+                        if (e.Message==null)
+                        {
+                            _magazine.Add(new int[] { account.Number, e.Number, 2 });
+                            item.Show(sender, e);
+                            break;
+                        }
+                        else
+                        {
+                            _magazine.Add(new int[] { account.Number, e.Number, 1 });
+                            item.Show(sender, e);
+                            break;
+                        }
+
+                    }
                 }
             }
+ 
+        }
+        public void Top_5_Outgoing()
+        {
+            var result = new List<int>();
+            var t =
+                from i in _magazine
+                group i by i[0]
+                   into g
+
         }
     }
 }
