@@ -22,10 +22,27 @@ namespace Mobile_operator
             mobileOperator.AddAAccount(999);
 
             mobileOperator.TakeAccount(222).addressBook.Add(111, "Artem");
+            mobileOperator.TakeAccount(333).Call(222);
+            mobileOperator.TakeAccount(111).SendMessage(555, "hello");
+            mobileOperator.TakeAccount(222).Call(222);
+            mobileOperator.TakeAccount(111).SendMessage(222, "hello");
+            mobileOperator.TakeAccount(111).Call(666);
+            mobileOperator.TakeAccount(444).SendMessage(444, "hello");
             mobileOperator.TakeAccount(111).Call(222);
             mobileOperator.TakeAccount(111).SendMessage(222, "hello");
-
+            mobileOperator.TakeAccount(111).Call(222);
+            mobileOperator.TakeAccount(111).SendMessage(888, "hello");
+            mobileOperator.TakeAccount(777).Call(222);
+            mobileOperator.TakeAccount(555).SendMessage(666, "hello");
+            mobileOperator.TakeAccount(888).Call(444);
+            mobileOperator.TakeAccount(111).SendMessage(333, "hello");
+            mobileOperator.TakeAccount(444).Call(999);
+            mobileOperator.TakeAccount(111).SendMessage(777, "hello");
+            mobileOperator.TakeAccount(888).Call(555);
+            mobileOperator.TakeAccount(666).SendMessage(111, "hello");
             mobileOperator.Top_5_Outgoing();
+            Console.WriteLine();
+            mobileOperator.Top_5_Ingoing();
             Console.ReadKey();
 
         }

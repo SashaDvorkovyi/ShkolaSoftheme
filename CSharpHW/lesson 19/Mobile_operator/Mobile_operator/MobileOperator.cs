@@ -8,17 +8,12 @@ namespace Mobile_operator
 {
     class MobileOperator
     {
-
-
         private List<MobileAccount> _listAccount;
-        private List<int[]> _magazine;
-
-
-
+        private Dictionary<int, DataCallEndMessage> _magazine;
         public MobileOperator()
         {
             _listAccount = new List<MobileAccount>();
-            _magazine = new List<int[]>();
+            _magazine = new Dictionary<int, DataCallEndMessage>();
         }
 
         public bool AddAAccount(int number)
@@ -32,9 +27,11 @@ namespace Mobile_operator
                     break;
                 }
             }
+
             if (result)
             {
                 _listAccount.Add(new MobileAccount(number));
+                _magazine.Add(number, new DataCallEndMessage());
                 _listAccount[_listAccount.Count - 1].MessageEvent += AcceptAndSend;
                 _listAccount[_listAccount.Count - 1].CallEvent += AcceptAndSend;
             }
@@ -48,6 +45,7 @@ namespace Mobile_operator
                 if (number == _listAccount[i].Number)
                 {
                     _listAccount.RemoveAt(i);
+                    _magazine.Remove(i);
                     _listAccount[i].MessageEvent -= AcceptAndSend;
                     _listAccount[i].CallEvent -= AcceptAndSend;
                 }
@@ -77,13 +75,15 @@ namespace Mobile_operator
                     {
                         if (e.Message==null)
                         {
-                            _magazine.Add(new int[] { account.Number, e.Number, 2 });
+                            _magazine[e.Number].InCall+=2;
+                            _magazine[account.Number].OutCall += 2;
                             item.Show(sender, e);
                             break;
                         }
                         else
                         {
-                            _magazine.Add(new int[] { account.Number, e.Number, 1 });
+                            _magazine[e.Number].InCall ++;
+                            _magazine[account.Number].OutCall ++;
                             item.Show(sender, e);
                             break;
                         }
@@ -93,14 +93,23 @@ namespace Mobile_operator
             }
  
         }
+
         public void Top_5_Outgoing()
         {
-            var result = new List<int>();
-            var t =
-                from i in _magazine
-                group i by i[0]
-                   into g
+            var result = _magazine.OrderBy(x =>- x.Value.OutCall - x.Value.OutMessage).Take(5);
+            foreach(var item in result)
+            {
+                Console.WriteLine(item.Key);
+            }
+        }
 
+        public void Top_5_Ingoing()
+        {
+            var result = _magazine.OrderBy(x => -x.Value.InCall - x.Value.InMessage).Take(5);
+            foreach (var item in result)
+            {
+                Console.WriteLine(item.Key);
+            }
         }
     }
 }

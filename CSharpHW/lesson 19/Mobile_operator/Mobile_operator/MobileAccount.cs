@@ -29,6 +29,7 @@ namespace Mobile_operator
             }
             return str;
         }
+
         public void Call(int number)
         {
             if (CallEvent != null)
@@ -58,11 +59,12 @@ namespace Mobile_operator
             }
             if (account != null)
             {
-                var acc = (from i in addressBook
-                           where i.Key == account.Number
-                           select i).First();
+                var acc = addressBook.FirstOrDefault(x => x.Key == account.Number);
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(acc.Value);
+                if (acc.Value != null)
+                {
+                    Console.WriteLine(acc.Value);
+                }
             }
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(account.Number);
