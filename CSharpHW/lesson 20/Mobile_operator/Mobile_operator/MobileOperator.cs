@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
 
 namespace Mobile_operator
 {
@@ -18,14 +19,27 @@ namespace Mobile_operator
         public bool AddAAccount(MobileAccount account)
         {
             var result = default(bool);
-            var count = _dictAccount.Count;
-            _dictAccount.Add(account.Number, account);
-            if (count != _dictAccount.Count)
+            var results = new List<ValidationResult>();
+            var context = new ValidationContext(account);
+
+            if (!Validator.TryValidateObject(account, context, results, true))
             {
-                _magazine.Add(account.Number, new DataCallEndMessage());
-                _dictAccount[account.Number].MessageEvent += AcceptAndSend;
-                _dictAccount[account.Number].CallEvent += AcceptAndSend;
-                result = true;
+                foreach (var error in results)
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
+            else
+            {
+                var count = _dictAccount.Count;
+                _dictAccount.Add(account.Number, account);
+                if (count != _dictAccount.Count)
+                {
+                    _magazine.Add(account.Number, new DataCallEndMessage());
+                    _dictAccount[account.Number].MessageEvent += AcceptAndSend;
+                    _dictAccount[account.Number].CallEvent += AcceptAndSend;
+                    result = true;
+                }
             }
             return result;
         }

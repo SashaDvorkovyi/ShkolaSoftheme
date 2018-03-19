@@ -21,7 +21,7 @@ namespace Mobile_operator
 
         public Dictionary<int, string> addressBook { get; set; }
         [Required]
-        [Range(3,10)]
+        [Range(99, 999999999)]
         public int Number { get; }
         [Required]
         [StringLength(50, MinimumLength =3)]
