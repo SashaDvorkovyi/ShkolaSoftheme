@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
-using System.Xml.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
+using System.Xml;
 
 namespace Mobile_operator
 {
@@ -11,15 +12,15 @@ namespace Mobile_operator
         static void Main(string[] args)
         {
             var mobileOperator = new MobileOperator();
-            mobileOperator.AddAAccount(new MobileAccount(111, "zzz", "aaa", "s@ukr.net"));
-            mobileOperator.AddAAccount(new MobileAccount(222, "www", "sss", "s@ukr.net"));
-            mobileOperator.AddAAccount(new MobileAccount(333, "eee", "ddd", "s@ukr.net"));
-            mobileOperator.AddAAccount(new MobileAccount(444, "rrr", "fff", "s@ukr.net"));
-            mobileOperator.AddAAccount(new MobileAccount(555, "ttt", "ggg", "s@ukr.net"));
-            mobileOperator.AddAAccount(new MobileAccount(666, "yyy", "hhh", "s@ukr.net"));
-            mobileOperator.AddAAccount(new MobileAccount(777, "uuu", "jjj", "s@ukr.net"));
-            mobileOperator.AddAAccount(new MobileAccount(888, "qwe", "asd", "s@ukr.net"));
-            mobileOperator.AddAAccount(new MobileAccount(999, "wer", "sdf", "s@ukr.net"));
+            mobileOperator.AddAAccount(new MobileAccount(111, "zzz", "aaa", "saukr.net"));
+            mobileOperator.AddAAccount(new MobileAccount(222, "www", "sss", "saukr.net"));
+            mobileOperator.AddAAccount(new MobileAccount(333, "eee", "ddd", "saukr.net"));
+            mobileOperator.AddAAccount(new MobileAccount(444, "rrr", "fff", "saukr.net"));
+            mobileOperator.AddAAccount(new MobileAccount(555, "ttt", "ggg", "saukr.net"));
+            mobileOperator.AddAAccount(new MobileAccount(666, "yyy", "hhh", "saukr.net"));
+            mobileOperator.AddAAccount(new MobileAccount(777, "uuu", "jjj", "saukr.net"));
+            mobileOperator.AddAAccount(new MobileAccount(888, "qwe", "asd", "saukr.net"));
+            mobileOperator.AddAAccount(new MobileAccount(999, "wer", "sdf", "saukr.net"));
 
             try
             {
@@ -52,8 +53,11 @@ namespace Mobile_operator
             Console.WriteLine();
             mobileOperator.Top_5_Ingoing();
 
+            SerializeClass.XMLSerialize<MobileOperator> (mobileOperator, "mobileOperator.xml");
+            SerializeClass.JsonSerialize<MobileOperator>(mobileOperator, "mobileOperator.json");
 
-            //mobileOperator.XMLSerializ();
+            var mobileOperatorClone1 = DeSerializeClass.ReadObjectXML<MobileOperator>("mobileOperator.xml");
+            var mobileOperatorClone2 = DeSerializeClass.ReadObjectJson<MobileOperator>("mobileOperator.json");
 
             Console.ReadKey();
 

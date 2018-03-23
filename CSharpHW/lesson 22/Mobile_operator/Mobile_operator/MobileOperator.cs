@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using System.Reflection;
-using System.Xml;
-using System.IO;
 
 
 namespace Mobile_operator
@@ -17,6 +12,7 @@ namespace Mobile_operator
     {
         [DataMember]
         public Dictionary<int, MobileAccount> _dictAccount;
+
         [DataMember]
         private Dictionary<int, DataCallEndMessage> _magazine;
 
@@ -110,8 +106,5 @@ namespace Mobile_operator
                 Console.WriteLine(item.Key);
             }
         }
-
-
-
     }
 }

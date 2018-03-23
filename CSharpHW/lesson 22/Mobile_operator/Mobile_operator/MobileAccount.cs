@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Collections;
 using System.Runtime.Serialization;
-using System.Xml;
 using System.ComponentModel.DataAnnotations;
 
 namespace Mobile_operator
@@ -69,6 +67,7 @@ namespace Mobile_operator
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(this.Number);
             Console.ResetColor();
+
             var account = sender as MobileAccount;
             if (e.Message != null)
             {
@@ -82,6 +81,7 @@ namespace Mobile_operator
             {
                 Console.Write("Coll from: ");
             }
+
             if (account != null)
             {
                 var acc = addressBook.FirstOrDefault(x => x.Key == account.Number);
