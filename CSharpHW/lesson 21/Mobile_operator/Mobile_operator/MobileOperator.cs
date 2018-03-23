@@ -1,0 +1,133 @@
+﻿using System;
+using System.Collections;
+using System.Xml.Serialization;
+using System.Collections.Generic;
+using System.Linq;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+
+
+namespace Mobile_operator
+{
+    [Serializable]
+    public class MobileOperator
+    {
+        [NonSerialized]
+        public Dictionary<int, MobileAccount> _dictAccount;
+        [NonSerialized]
+        private Dictionary<int, DataCallEndMessage> _magazine;
+
+        public MobileOperator()
+        {
+            _dictAccount = new Dictionary<int, MobileAccount>();
+            _magazine = new Dictionary<int, DataCallEndMessage>();
+
+        }
+
+        public bool AddAAccount(MobileAccount account)
+        {
+            var result = default(bool);
+            var results = new List<ValidationResult>();
+            var context = new ValidationContext(account);
+
+            if (!Validator.TryValidateObject(account, context, results, true))
+            {
+                foreach (var error in results)
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
+            else
+            {
+                var count = _dictAccount.Count;
+                _dictAccount.Add(account.Number, account);
+                if (count != _dictAccount.Count)
+                {
+                    _magazine.Add(account.Number, new DataCallEndMessage());
+                    _dictAccount[account.Number].MessageEvent += AcceptAndSend;
+                    _dictAccount[account.Number].CallEvent += AcceptAndSend;
+                    result = true;
+                }
+            }
+            return result;
+        }
+
+        public void DeleteAccount(int number)
+        {
+            if (_dictAccount.ContainsKey(number))
+            {
+                _dictAccount.Remove(number);
+                _magazine.Remove(number);
+                _dictAccount[number].MessageEvent -= AcceptAndSend;
+                _dictAccount[number].CallEvent -= AcceptAndSend;
+
+            }
+        }
+
+        public MobileAccount TakeAccount(int number) => _dictAccount[number];
+
+        public void AcceptAndSend(object accountOut, EEventArgs eventArg)
+        {
+            var account = accountOut as MobileAccount;
+            if (account != null)
+            {
+                if (_dictAccount.ContainsKey(eventArg.Number))
+                {
+                    if (eventArg.Message == null)
+                    {
+                        _magazine[eventArg.Number].InCall += 2;
+                        _magazine[account.Number].OutCall += 2;
+                        _dictAccount[eventArg.Number].Show(account, eventArg);
+                    }
+                    else
+                    {
+                        _magazine[eventArg.Number].InCall++;
+                        _magazine[account.Number].OutCall++;
+                        _dictAccount[eventArg.Number].Show(account, eventArg);
+                    }
+                }
+            }
+ 
+        }
+
+        public void Top_5_Outgoing()
+        {
+            var result = _magazine.OrderByDescending(x => x.Value.OutCall + x.Value.OutMessage).Take(5);
+            foreach(var item in result)
+            {
+                Console.WriteLine(item.Key);
+            }
+        }
+
+        public void Top_5_Ingoing()
+        {
+            var result = _magazine.OrderByDescending(x => x.Value.InCall + x.Value.InMessage).Take(5);
+            foreach (var item in result)
+            {
+                Console.WriteLine(item.Key);
+            }
+        }
+
+        public void BinarySerializ()
+        {
+            var newMobileAccount = new { dictAccountKey = this._dictAccount.Keys.ToArray(), magazineKey = this._magazine.Keys.ToArray() };
+
+            var binarySerializ = new BinaryFormatter();
+            using (var fs = new FileStream("mobileOperator.dat", FileMode.OpenOrCreate))
+            {
+                binarySerializ.Serialize(fs, newMobileAccount);
+            }
+        }
+        public void XMLSerializ()
+        {
+            var xmlSerializ = new XmlSerializer(typeof(MobileAccount));
+            using (var fs = new FileStream("mobileOperator.xml", FileMode.OpenOrCreate))
+            {
+                xmlSerializ.Serialize(fs, this);
+                var writer = new StreamWriter(fs);
+                writer.Write(this._dictAccount.Keys.ToArray());
+            }
+        }
+    }
+}
