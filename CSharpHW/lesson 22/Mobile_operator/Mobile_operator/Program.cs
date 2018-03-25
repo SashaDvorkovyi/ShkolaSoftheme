@@ -6,15 +6,8 @@ namespace Mobile_operator
     {
         static void Main(string[] args)
         {
-            var mobileOperator = default(MobileOperator);
-            try
-            {
-                mobileOperator = DeSerializeClass.ReadObjectJson<MobileOperator>("mobileOperator.json");
-            }
-            catch(Exception)
-            {
-                Console.WriteLine("There is no deserialization file");
-            }
+            var mobileOperator = DeSerializeClass.ReadObjectJson<MobileOperator>("mobileOperator.json");
+            var mobileOperator2 = DeSerializeClass.ReadObjectXML<MobileOperator>("mobileOperator.xml");
 
             if (mobileOperator != null)
             {

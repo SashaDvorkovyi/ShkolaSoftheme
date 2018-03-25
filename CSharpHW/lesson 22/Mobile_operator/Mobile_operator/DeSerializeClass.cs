@@ -9,26 +9,48 @@ namespace Mobile_operator
     {
         public static T ReadObjectXML<T>(string nameOfFile)
         {
-            var newPerson = default(T);
-            var ser = new DataContractSerializer(typeof(T));
-            using (FileStream fs = new FileStream(nameOfFile, FileMode.OpenOrCreate))
+            if (new FileInfo(nameOfFile).Exists)
             {
-                var reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
-                newPerson = (T)ser.ReadObject(reader);
+                var ser = new DataContractSerializer(typeof(T));
+
+                using (FileStream fs = new FileStream(nameOfFile, FileMode.Open))
+                {
+                    if (fs.CanRead)
+                    {
+                        var reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
+                        var readItem = ser.ReadObject(reader);
+
+                        if (readItem is T)
+                        {
+                            return (T)readItem;
+                        }
+                    }
+                }
             }
-            return newPerson;
+            return default(T);
         }
 
         public static T ReadObjectJson<T>(string nameOfFile)
         {
-            var newPerson = default(T);
-            var ser = new DataContractJsonSerializer(typeof(T));
-            using (FileStream fs = new FileStream(nameOfFile, FileMode.OpenOrCreate))
-            {
-                var reader = JsonReaderWriterFactory.CreateJsonReader(fs, new XmlDictionaryReaderQuotas());
-                newPerson = (T)ser.ReadObject(reader);
+            if (new FileInfo(nameOfFile).Exists)
+            { 
+                var ser = new DataContractJsonSerializer(typeof(T));
+
+                using (FileStream fs = new FileStream(nameOfFile, FileMode.Open))
+                {
+                    if (fs.CanRead)
+                    {
+                        var reader = JsonReaderWriterFactory.CreateJsonReader(fs, new XmlDictionaryReaderQuotas());
+                        var readItem = ser.ReadObject(reader);
+
+                        if (readItem is T)
+                        {
+                            return (T)readItem;
+                        }
+                    }
+                }
             }
-            return newPerson;
+            return default(T);
         }
     }
 }

@@ -20,7 +20,6 @@ namespace Mobile_operator
         {
             _dictAccount = new Dictionary<int, MobileAccount>();
             _magazine = new Dictionary<int, DataCallEndMessage>();
-
         }
 
         public bool AddAAccount(MobileAccount account)
@@ -40,6 +39,7 @@ namespace Mobile_operator
             {
                 var count = _dictAccount.Count;
                 _dictAccount.Add(account.Number, account);
+
                 if (count != _dictAccount.Count)
                 {
                     _magazine.Add(account.Number, new DataCallEndMessage());
@@ -59,13 +59,12 @@ namespace Mobile_operator
                 _magazine.Remove(number);
                 _dictAccount[number].MessageEvent -= AcceptAndSend;
                 _dictAccount[number].CallEvent -= AcceptAndSend;
-
             }
         }
 
         public MobileAccount TakeAccount(int number) => _dictAccount[number];
 
-        public void AcceptAndSend(object accountOut, EEventArgs eventArg)
+        public void AcceptAndSend(object accountOut, CallAndMessageEventArgs eventArg)
         {
             var account = accountOut as MobileAccount;
             if (account != null)

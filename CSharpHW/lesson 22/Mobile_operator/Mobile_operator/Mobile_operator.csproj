@@ -46,7 +46,7 @@
   <ItemGroup>
     <Compile Include="DataCallEndMessage.cs" />
     <Compile Include="DeSerializeClass.cs" />
-    <Compile Include="EEventArgs.cs" />
+    <Compile Include="CallAndMessageEventArgs.cs" />
     <Compile Include="MobileAccount.cs" />
     <Compile Include="MobileOperator.cs" />
     <Compile Include="Program.cs" />

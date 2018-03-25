@@ -9,8 +9,8 @@ namespace Mobile_operator
     [DataContract]
     public class MobileAccount 
     {
-        public event EventHandler<EEventArgs> MessageEvent;
-        public event EventHandler<EEventArgs> CallEvent;
+        public event EventHandler<CallAndMessageEventArgs> MessageEvent;
+        public event EventHandler<CallAndMessageEventArgs> CallEvent;
 
         [Required]
         [Range(99, 999999999)]
@@ -48,7 +48,7 @@ namespace Mobile_operator
         {
             if (MessageEvent != null)
             {
-                MessageEvent(this, new EEventArgs(number, str));
+                MessageEvent(this, new CallAndMessageEventArgs(number, str));
             }
             return str;
         }
@@ -57,18 +57,17 @@ namespace Mobile_operator
         {
             if (CallEvent != null)
             {
-                CallEvent(this, new EEventArgs(number));
+                CallEvent(this, new CallAndMessageEventArgs(number));
             }
         }
 
-        public void Show(object sender, EEventArgs e)
+        public void Show(object sender, CallAndMessageEventArgs e)
         {
             Console.Write("This telephone have number: ");
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(this.Number);
             Console.ResetColor();
 
-            var account = sender as MobileAccount;
             if (e.Message != null)
             {
                 Console.Write("Message text: ");
@@ -82,6 +81,7 @@ namespace Mobile_operator
                 Console.Write("Coll from: ");
             }
 
+            var account = sender as MobileAccount;
             if (account != null)
             {
                 var acc = addressBook.FirstOrDefault(x => x.Key == account.Number);

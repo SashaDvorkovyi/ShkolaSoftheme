@@ -9,7 +9,7 @@ namespace Mobile_operator
         public static void XMLSerialize<T>(T obj, string nameOfFile)
         {
             var xmlSerialize = new DataContractSerializer(typeof(T));
-            using(var fs= new FileStream(nameOfFile, FileMode.OpenOrCreate))
+            using(var fs= new FileStream(nameOfFile, FileMode.Open))
             {
                 xmlSerialize.WriteObject(fs, obj);
             }
@@ -18,7 +18,7 @@ namespace Mobile_operator
         public static void JsonSerialize<T>(T obj, string nameOfFile)
         {
             var xmlSerialize = new DataContractJsonSerializer(typeof(T));
-            using (var fs = new FileStream(nameOfFile, FileMode.OpenOrCreate))
+            using (var fs = new FileStream(nameOfFile, FileMode.Open))
             {
                 xmlSerialize.WriteObject(fs, obj);
             }

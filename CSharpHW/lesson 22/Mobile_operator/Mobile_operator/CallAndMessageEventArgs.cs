@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace Mobile_operator
 {
 
-    public class EEventArgs : EventArgs
+    public class CallAndMessageEventArgs : EventArgs
     {
-        public EEventArgs(int number, string message)
+        public CallAndMessageEventArgs(int number, string message)
         {
             Message = message;
             Number = number;
         }
 
-        public EEventArgs(int number)
+        public CallAndMessageEventArgs(int number)
         {
             Number = number;
         }
