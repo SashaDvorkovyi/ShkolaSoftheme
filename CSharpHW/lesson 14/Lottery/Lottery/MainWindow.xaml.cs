@@ -91,35 +91,30 @@ namespace Lottery
 
         public void Print(string str, LuckyNumber ob, string[] array)
         {
-            
             var coincided = default(int);
             for (var i = 0; i < LuckyNumber.Lenght; i++)
             {
                 if (string.Compare(ob[i].ToString(),str[i].ToString())==0)
                 {
-                    //Thread.Sleep(300);
                     ColorText(ob[i].ToString(), OutPut, Brushes.Green);
                     coincided++;
                 }
                 else
                 {
-                    //Thread.Sleep(300);
                     ColorText(ob[i].ToString(), OutPut, Brushes.Red);
                 }
             }
-            Info1.Text = array[coincided];
+            Info1.Text = array[coincided];;
         }
 
         public void ColorText(string msg, RichTextBox box1,  object color)
         {
             box1.Dispatcher.Invoke(new Action(() =>
             {
-                //Thread.Sleep(300);
                 TextRange range = new TextRange(box1.Document.ContentEnd, box1.Document.ContentEnd);
                 range.Text = msg;
                 range.ApplyPropertyValue(TextElement.ForegroundProperty, color);
             }));
-
         }
 
         private void Info_TextChanged(object sender, TextChangedEventArgs e)
