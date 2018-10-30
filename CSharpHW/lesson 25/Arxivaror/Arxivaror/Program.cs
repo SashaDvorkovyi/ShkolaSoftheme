@@ -14,26 +14,50 @@ namespace Arxivaror
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Pleas enter the ol name of directiry");
+            Console.WriteLine("Pleas enter the all name of directiry");
             var directiry = new DirectoryInfo(Console.ReadLine());
-            var listOfFiles=GeaAllFiles(directiry);
+            var listOfFiles = GeaAllFiles(directiry);
 
-            Semaphore semaphore = new Semaphore(3, 3);
 
-            foreach (var fileName in listOfFiles)
+            Thread[] treads = new Thread[] {
+                new Thread(new ParameterizedThreadStart(ReadAndWriteToZip)),
+                new Thread(new ParameterizedThreadStart(ReadAndWriteToZip)),
+                new Thread(new ParameterizedThreadStart(ReadAndWriteToZip))
+            };
+
+            for (var fileNumeNumber=0; fileNumeNumber< listOfFiles.Count; fileNumeNumber++)
             {
-                var thread = new Thread(() => 
+                if (fileNumeNumber < treads.Length)
                 {
-                    ReadAndWriteToZip(fileName, semaphore);
-                });
+                    treads[fileNumeNumber].Start(listOfFiles[fileNumeNumber]);
+                    continue;
+                }
+                var i = 0;
+                while(true)
+                {
+                    if(string.Equals(treads[i].ThreadState.ToString(), "Stopped"))
+                    {
+                        treads[i] = new Thread(new ParameterizedThreadStart(ReadAndWriteToZip));
+                        treads[i].Start(listOfFiles[fileNumeNumber]);
+                        break;
+                    }
+                    i++;
+                    if (i == 3)
+                    { i = 0; }
+                }
 
-                thread.Start();
             }
+            foreach(var thread in treads)
+            {
+                thread.Join();
+            }
+            Console.WriteLine("Already done. You can close the program.");
+            Console.ReadKey();
         }
 
-        public static void ReadAndWriteToZip(string fileName, Semaphore semaphore)
+        public static void ReadAndWriteToZip(object fileNameObj)
         {
-            semaphore.WaitOne();
+            var fileName = fileNameObj.ToString();
             using (FileStream fs = new FileStream(fileName.Substring(0, fileName.LastIndexOf('.')) + ".zip", FileMode.OpenOrCreate))
             {
                 using (ZipArchive arch = new ZipArchive(fs, ZipArchiveMode.Create))
@@ -41,30 +65,12 @@ namespace Arxivaror
                     arch.CreateEntryFromFile(fileName, fileName.Substring(fileName.LastIndexOf('\\')));
                 }
             }
-            semaphore.Release();
         }
 
         public static List<string> GeaAllFiles(DirectoryInfo directiry)
         {
             var list = new List<string>();
-            foreach (var dir in directiry.GetDirectories())
-            {
-                GeaAllFiles(new DirectoryInfo(dir.FullName), ref list);
-            }
-            foreach (var file in directiry.GetFiles())
-            {
-                list.Add(file.FullName);
-            }
-            return list;
-        }
-
-        public static List<string> GeaAllFiles(DirectoryInfo directiry, ref List<string> list)
-        {
-            foreach (var dir in directiry.GetDirectories())
-            {
-                GeaAllFiles(new DirectoryInfo(dir.FullName), ref list);
-            }
-            foreach (var file in directiry.GetFiles())
+            foreach (var file in directiry.GetFiles("*", SearchOption.AllDirectories))
             {
                 if (string.Equals(".zip", file.Name.Substring(file.Name.LastIndexOf('.'))))
                 {
