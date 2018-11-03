@@ -62,10 +62,12 @@ namespace Arxivaror
             {
                 using (ZipArchive arch = new ZipArchive(fs, ZipArchiveMode.Create))
                 {
-                    arch.CreateEntryFromFile(fileName, fileName.Substring(fileName.LastIndexOf('\\')));
+                    arch.CreateEntryFromFile(fileName, (fileName.Substring(fileName.LastIndexOf('\\')+1)));
                 }
             }
         }
+
+
 
         public static List<string> GeaAllFiles(DirectoryInfo directiry)
         {
