@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeText", "ChangeText\ChangeText.csproj", "{B82CB945-AAD3-4F39-A1E3-8752F729216A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B82CB945-AAD3-4F39-A1E3-8752F729216A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B82CB945-AAD3-4F39-A1E3-8752F729216A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B82CB945-AAD3-4F39-A1E3-8752F729216A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B82CB945-AAD3-4F39-A1E3-8752F729216A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {521E24CF-F2F2-4E02-948B-9DAD8A7E41A2}
+	EndGlobalSection
+EndGlobal
