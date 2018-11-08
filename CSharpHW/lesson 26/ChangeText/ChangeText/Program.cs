@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Collections.Concurrent;
+
 
 namespace ChangeText
 {
@@ -13,20 +8,20 @@ namespace ChangeText
         static void Main(string[] args)
         {
             Console.WriteLine("Pleas enter the all name of directiry");
-            var directiry = new DirectoryInfo(Console.ReadLine());
-            //Console.WriteLine("Pleas enter the type of text file. Example - 'txt' ");
-            //var tipeOfFile = Console.ReadLine();
-            //Console.WriteLine("Enter the string which you will want to change.");
-            //var changeString = Console.ReadLine();
-            //Console.WriteLine("Enter the line to which you want to change.");
-            //var changedString = Console.ReadLine();
+            var directory = Console.ReadLine();
+            Console.WriteLine("Pleas enter the tipe of file. Exemple: \".txt\"");
+            var ditiofFile = Console.ReadLine();
+            Console.WriteLine("Enter the expression will be replaced.");
+            var expression1 = Console.ReadLine();
+            Console.WriteLine("Enter an expression that will replaces the old");
+            var expression2 = Console.ReadLine();
 
             var a = new ChangeTextAsync();
-            a.ChangeFile(a.GetFilesWithTipe(directiry, ".txt")[0], "ll", "xxx");
+            a.ParallelCoincidencesSearchAndChangeFiles(directory, ditiofFile, expression1, expression2);
             a.SaveLogFile();
-            Console.ReadKey();
-        }
 
-       
+            Console.WriteLine("The program has completed execution. Now you can close it!!!");
+            Console.ReadKey();
+        } 
     }
 }

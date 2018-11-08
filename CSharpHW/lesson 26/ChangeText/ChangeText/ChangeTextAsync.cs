@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Threading;
 using System.Collections.Concurrent;
 
 namespace ChangeText
@@ -15,6 +15,18 @@ namespace ChangeText
         public ChangeTextAsync()
         {
             LogDictionary = new ConcurrentDictionary<string, Dictionary<int, string[]>>();
+        }
+        
+        public void ParallelCoincidencesSearchAndChangeFiles(string directiry, string tipeOfFile, string expressionSearched, string newValue)
+        {
+            var allFiles = GetFilesWithTipe( directiry, tipeOfFile);
+
+            Parallel.ForEach(allFiles, new ParallelOptions { MaxDegreeOfParallelism = 4 }, x =>
+            {
+                Console.WriteLine(x);
+                ChangeFile(x, expressionSearched, newValue);
+                Console.WriteLine("Thread - {0}", Thread.CurrentThread.ManagedThreadId);
+            });
         }
 
         public void ChangeFile(string fullNameOfFile, string expressionSearched, string newValue)
@@ -90,10 +102,11 @@ namespace ChangeText
             }
         }
 
-        public List<string> GetFilesWithTipe(DirectoryInfo directiry, string tipeOfFile)
+        public List<string> GetFilesWithTipe(string directiry, string tipeOfFile)
         {
+            var dir = new DirectoryInfo(directiry);
             var list = new List<string>();
-            foreach (var file in directiry.GetFiles("*" + tipeOfFile, SearchOption.AllDirectories))
+            foreach (var file in dir.GetFiles("*" + tipeOfFile, SearchOption.AllDirectories))
             {
                 list.Add(file.FullName);
             }
