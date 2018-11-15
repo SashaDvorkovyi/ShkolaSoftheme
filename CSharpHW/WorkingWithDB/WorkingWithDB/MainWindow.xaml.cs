@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -83,6 +84,7 @@ namespace WorkingWithDB
 
         private async void UpdateListBox1()
         {
+
             SqlDataReader sqlReader = null;
 
             SqlCommand command = new SqlCommand("SELECT * FROM [Products]", sqlConnection);
