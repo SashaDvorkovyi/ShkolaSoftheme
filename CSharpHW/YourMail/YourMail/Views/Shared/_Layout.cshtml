@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="wrapper">
+        <div class="headerBody">
+            <div class="brend">YOURMAIL</div>
+            @Html.Partial("_LoginPartial")
+        </div>
+        <div class="sidebar">
+            <div class="top">
+                <div class="BodyPanelTop">
+                    @Html.ActionLink("Home", "Index", "Home", new { @class = "links" })
+                </div>
+                <div class="BodyPanelTop">
+                    @Html.ActionLink("Contact", "Contact", "Home", new { @class = "links" })
+                </div>
+                <div class="BodyPanelTop">
+                    @Html.ActionLink("Private", "Private", "Account", new { @class = "links" })
+                </div>
+            </div>
+                <div>
+                    <ul class="sidebarUl">
+                        <li class="sidebarLi">
+                            <a class="links" href="https://www.google.com/" name="New_letter">
+                                <div class="sidebarDiv   activ">
+                                    <div class="number_of_read">35</div>
+                                    <div class="unread_quantity">35</div>
+                                    <div class="sidebarDivName">New_letter</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="sidebarLi">
+                            <a class="links" href="https://www.google.com/" name="Incoming">
+                                <div class="sidebarDiv">
+                                    <div class="number_of_read">35</div>
+                                    <div class="unread_quantity">35</div>
+                                    <div class="sidebarDivName">Incoming</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="sidebarLi">
+                            <a class="links" href="https://www.google.com/" name="Send">
+                                <div class="sidebarDiv">
+                                    <div class="number_of_read">35</div>
+                                    <div class="unread_quantity">35</div>
+                                    <div class="sidebarDivName">Sent</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="sidebarLi">
+                            <a class="links" href="https://www.google.com/" name="Spam">
+                                <div class="sidebarDiv">
+                                    <div class="number_of_read">35</div>
+                                    <div class="unread_quantity">35</div>
+                                    <div class="sidebarDivName">Spam</div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        <div class="body">
+            <div class="top">
+                <div id="body">
+                    @RenderSection("featured", required: false)
+                    <section class="content-wrapper main-content clear-fix">
+                        @RenderBody()
+                    </section>
+                </div>
+            </div>
+            <div class="latters">
+                <ul class="sidebarUl"></ul>
+                <div class="top">
+                    <a class="linksk" href="https://www.google.com/" name="New_letter">
+                        <div class="BodyPanelTop">Предыдущая</div>
+                    </a>
+                    <a class="links" href="https://www.google.com/" name="New_letter">
+                        <div class="BodyPanelTop">Следущая</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="cont">© 1998 − 2018</div>
+        </div>
+    </div>
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
