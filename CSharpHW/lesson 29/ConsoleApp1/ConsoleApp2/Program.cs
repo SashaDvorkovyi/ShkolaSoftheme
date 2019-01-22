@@ -19,7 +19,7 @@ namespace ConsoleApp2
             var typeInfo = t.GetTypeInfo();
             Console.WriteLine("Type Info: {0}", typeInfo);
 
-            var methods = t.GetMethods(BindingFlags.NonPublic | BindingFlags.Static);
+            var methods = t.GetMethods(BindingFlags.NonPublic | BindingFlags.Static) ;
 
             foreach (var method in methods)
             {

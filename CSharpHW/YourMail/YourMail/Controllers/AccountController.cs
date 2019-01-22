@@ -7,6 +7,7 @@ using WebMatrix.WebData;
 using YourMail.Filters;
 using YourMail.Models;
 using System.Linq;
+using YourMail.Interfaces;
 
 namespace YourMail.Controllers
 {
@@ -63,7 +64,8 @@ namespace YourMail.Controllers
                 {
                     
                     WebSecurity.CreateUserAndAccount(model.UserMail, model.Password);
-                    using(var db = new DataBaseContext())
+                    WebSecurity.Login(model.UserMail, model.Password);
+                    using (var db = new DataBaseContext())
                     {
                         var ListIncomingLetters = new List<IncomingLetter>();
                         for(var i=0; i<UserProfile.MaxIncomingLetters; i++)
@@ -86,11 +88,12 @@ namespace YourMail.Controllers
                         }
                         db.SpamLetters.AddRange(ListSpamLetter);
 
-                        var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == User.Identity.Name);
-                        user.MinIndexInUserTeables = 0;
-                        user.MaxIndexInUserTeables = 199;
+                        var user = db.UserProfiles.FirstOrDefault(x => x.UserMail==model.UserMail);
+                        user.MinIndexInUserTeables = user.Id*UserProfile.MaxIncomingLetters;
+                        user.MaxIndexInUserTeables = user.Id * UserProfile.MaxIncomingLetters + UserProfile.MaxIncomingLetters - 1;
+                        db.SaveChanges();
                     }
-                    WebSecurity.Login(model.UserMail, model.Password);
+
                     return RedirectToAction("Index", "Home");
                 }
                 catch (MembershipCreateUserException e)
