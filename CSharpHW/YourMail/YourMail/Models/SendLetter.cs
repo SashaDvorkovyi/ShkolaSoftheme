@@ -5,6 +5,11 @@ namespace YourMail.Models
 {
     public class SendLetter : ITypesOfLetter
     {
+        public SendLetter(int orderId)
+        {
+            this.OrderId = orderId;
+        }
+
         public int Id { get; set; }
 
         public bool IsExist { get; set; }

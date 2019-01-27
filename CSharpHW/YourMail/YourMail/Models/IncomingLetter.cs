@@ -5,6 +5,11 @@ namespace YourMail.Models
 {
     public class IncomingLetter : ITypesOfLetter
     {
+        public IncomingLetter(int orderId)
+        {
+            this.OrderId = orderId;
+        }
+
         public int Id { get; set; }
 
         public bool IsExist { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using WebMatrix.WebData;
 
 namespace YourMail.Filters
 {
@@ -8,9 +9,20 @@ namespace YourMail.Filters
         public override bool IsValid(object value)
         {
             var userEmail = value as string;
-            if (userEmail != null && userEmail.Length < 11)
+
+            if (userEmail == null)
             {
-                ErrorMessage = "The email field cannot be empty or less than 11 characters";
+                ErrorMessage = "The email field cannot be empty";
+                return false;
+            }
+            else if (WebSecurity.UserExists(userEmail))
+            {
+                ErrorMessage = "The email is already exists";
+                return false;
+            }
+            if (userEmail.Length < 11)
+            {
+                ErrorMessage = "The email field cannot be less than 11 characters";
                 return false;
             }
             else if (userEmail.Length > 25)
@@ -23,6 +35,7 @@ namespace YourMail.Filters
                 ErrorMessage = "Email should end on @uour.com and contain only letters or numbers";
                 return false;
             }
+
             return true;
         }
     }

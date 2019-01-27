@@ -51,7 +51,6 @@ namespace YourMail.Models
     public class LoginModel
     {
         [Required]
-        [MyMailAddress]
         [Display(Name = "User email")]
         public string UserMail { get; set; }
 

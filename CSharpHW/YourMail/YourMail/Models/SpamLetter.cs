@@ -5,6 +5,11 @@ namespace YourMail.Models
 {
     public class SpamLetter : ITypesOfLetter
     {
+        public SpamLetter(int orderId)
+        {
+            this.OrderId = orderId;
+        }
+
         public int Id { get; set; }
 
         public bool IsExist { get; set; }

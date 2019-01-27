@@ -8,6 +8,7 @@ using YourMail.Filters;
 using YourMail.Models;
 using System.Linq;
 using YourMail.Interfaces;
+using System.Data.Entity;
 
 namespace YourMail.Controllers
 {
@@ -42,7 +43,6 @@ namespace YourMail.Controllers
         public ActionResult LogOff()
         {
             WebSecurity.Logout();
-
             return RedirectToAction("Index", "Home");
         }
 
@@ -65,32 +65,36 @@ namespace YourMail.Controllers
                     
                     WebSecurity.CreateUserAndAccount(model.UserMail, model.Password);
                     WebSecurity.Login(model.UserMail, model.Password);
+                    var a = WebSecurity.CurrentUserId;
                     using (var db = new DataBaseContext())
                     {
+                        var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == model.UserMail);
+
                         var ListIncomingLetters = new List<IncomingLetter>();
                         for(var i=0; i<UserProfile.MaxIncomingLetters; i++)
                         {
-                            ListIncomingLetters.Add(new IncomingLetter());
+                            ListIncomingLetters.Add(new IncomingLetter(user.Id));
                         }
                         db.IncomingLetters.AddRange(ListIncomingLetters);
+
 
                         var ListSendLetter = new List<SendLetter>();
                         for (var i = 0; i < UserProfile.MaxIncomingLetters; i++)
                         {
-                            ListSendLetter.Add(new SendLetter());
+                            ListSendLetter.Add(new SendLetter(user.Id));
                         }
                         db.SendLetters.AddRange(ListSendLetter);
 
-                        var ListSpamLetter = new List<SpamLetter>();
+                        var ListSpamLetter = new List<SpamLetter>(user.Id);
                         for (var i = 0; i < UserProfile.MaxIncomingLetters; i++)
                         {
-                            ListSpamLetter.Add(new SpamLetter());
+                            ListSpamLetter.Add(new SpamLetter(user.Id));
                         }
                         db.SpamLetters.AddRange(ListSpamLetter);
 
-                        var user = db.UserProfiles.FirstOrDefault(x => x.UserMail==model.UserMail);
-                        user.MinIndexInUserTeables = user.Id*UserProfile.MaxIncomingLetters;
-                        user.MaxIndexInUserTeables = user.Id * UserProfile.MaxIncomingLetters + UserProfile.MaxIncomingLetters - 1;
+                        user.MinIndexInUserTeables = user.Id*UserProfile.MaxIncomingLetters - UserProfile.MaxIncomingLetters + 1;
+                        user.MaxIndexInUserTeables = user.Id * UserProfile.MaxIncomingLetters;
+                        db.Entry(user).State = EntityState.Modified;
                         db.SaveChanges();
                     }
 

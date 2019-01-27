@@ -1,0 +1,45 @@
+﻿@model  YourMail.Models.Letter
+
+@{
+    ViewBag.Title = "New_letter";
+}
+
+<hgroup class="title">
+    <h1>@ViewBag.Title.</h1>
+</hgroup>
+
+<section>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <legend>New Letter</legend>
+            <ol>
+                <li>
+                    @Html.LabelFor(x => x.FromWhom)
+                    @Html.Label("FromWhom", ": "+User.Identity.Name)
+                </li>
+                <li>
+                    @Html.LabelFor(x => x.ToWhom)<br />
+                    @Html.TextBoxFor(x => x.ToWhom)
+                </li>
+                <li>
+                    @Html.LabelFor(x => x.Subject)<br />
+                    @Html.TextBoxFor(x => x.Subject)
+                    @Html.ValidationMessageFor(x => x.Subject)
+                </li>
+                <li>
+                    @Html.LabelFor(x => x.Content)<br />
+                    @Html.TextAreaFor(x => x.Content)
+                </li>
+            </ol>
+            <input type="submit" value="Send" />
+        </fieldset>
+    }
+</section>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

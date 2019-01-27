@@ -28,13 +28,8 @@
                 <div>
                     <ul class="sidebarUl">
                         <li class="sidebarLi">
-                            <a class="links" href="https://www.google.com/" name="New_letter">
-                                <div class="sidebarDiv   activ">
-                                    <div class="number_of_read">35</div>
-                                    <div class="unread_quantity">35</div>
-                                    <div class="sidebarDivName">New_letter</div>
-                                </div>
-                            </a>
+                            @Html.ActionLink(@<div>111</div>, "New_letter", "Message", new { @class = "links" })
+                            <div class="sidebarDiv"><div class="sidebarDivName">Incoming</div></div>
                         </li>
                         <li class="sidebarLi">
                             <a class="links" href="https://www.google.com/" name="Incoming">
