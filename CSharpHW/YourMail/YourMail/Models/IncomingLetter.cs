@@ -14,7 +14,7 @@ namespace YourMail.Models
 
         public bool IsExist { get; set; }
 
-        public bool? IsRead { get; set; }
+        public bool IsRead { get; set; }
 
         public int? OrderId { get; set; }
 

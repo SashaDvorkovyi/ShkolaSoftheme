@@ -40,11 +40,21 @@ ul.hr li:first-child {
 	z-index: 1;
 }
 
-.activ{
-	background-color:  #3dba14;
-	padding: 10px;
-	color: white;
-	font-size: 20px;
+.linksSidebarHead {
+    text-decoration: none;
+    background-color: #99cdff;
+    color: #000000;
+}
+
+.linksSidebar{
+    text-decoration: none;
+}
+
+.activ {
+    background-color: #3dba14;
+    padding: 10px;
+    color: white;
+    font-size: 20px;
 }
 
 .sidebarDivName{

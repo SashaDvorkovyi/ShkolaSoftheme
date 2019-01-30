@@ -12,7 +12,7 @@ namespace YourMail.Interfaces
 
         bool IsExist { get; set; }
 
-        bool? IsRead { get; set; }
+        bool IsRead { get; set; }
 
         int? OrderId { get; set; }
 

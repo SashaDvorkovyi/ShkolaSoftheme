@@ -6,6 +6,11 @@ namespace YourMail.Models
 {
     public class Letter
     {
+        public Letter()
+        {
+            Date = DateTime.Now;
+        }
+
         [Key]
         public int Id { get; set; }
 

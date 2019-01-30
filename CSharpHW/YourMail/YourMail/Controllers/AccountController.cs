@@ -65,7 +65,6 @@ namespace YourMail.Controllers
                     
                     WebSecurity.CreateUserAndAccount(model.UserMail, model.Password);
                     WebSecurity.Login(model.UserMail, model.Password);
-                    var a = WebSecurity.CurrentUserId;
                     using (var db = new DataBaseContext())
                     {
                         var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == model.UserMail);

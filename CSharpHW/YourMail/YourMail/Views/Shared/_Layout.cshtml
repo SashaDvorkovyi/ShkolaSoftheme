@@ -16,20 +16,23 @@
         <div class="sidebar">
             <div class="top">
                 <div class="BodyPanelTop">
-                    @Html.ActionLink("Home", "Index", "Home", new { @class = "links" })
+                    @Html.ActionLink("Home", "Index", "Home", null,  new { @class = "links" })
                 </div>
                 <div class="BodyPanelTop">
-                    @Html.ActionLink("Contact", "Contact", "Home", new { @class = "links" })
+                    @Html.ActionLink("Contact", "Contact", "Home", null, new { @class = "links" })
                 </div>
                 <div class="BodyPanelTop">
-                    @Html.ActionLink("Private", "Private", "Account", new { @class = "links" })
+                    @Html.ActionLink("Private", "Private", "Home", null, new { @class = "links" })
                 </div>
             </div>
                 <div>
                     <ul class="sidebarUl">
                         <li class="sidebarLi">
-                            @Html.ActionLink(@<div>111</div>, "New_letter", "Message", new { @class = "links" })
-                            <div class="sidebarDiv"><div class="sidebarDivName">Incoming</div></div>
+                            <a class="links" href="~/Message/New_letter" name="Incoming">
+                                <div class="sidebarDiv">
+                                    <div class="sidebarDivName">New Letter</div>
+                                </div>
+                            </a>
                         </li>
                         <li class="sidebarLi">
                             <a class="links" href="https://www.google.com/" name="Incoming">

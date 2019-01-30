@@ -18,15 +18,27 @@ namespace YourMail.Models
         public const int MaxSpamLetters = 200;
         public const int MaxSpamMail = 200;
 
-        public int? MaxIndexInUserTeables { get; set; }
-        public int? MinIndexInUserTeables { get; set; }
+        public UserProfile()
+        {
+            MaxIndexInUserTeables = default(int);
+            MinIndexInUserTeables = default(int);
+            CountAllIncomingLetters = default(int);
+            CountDontReadIncomingLetters = default(int);
+            CountASentLetters = default(int);
+            CountDontReadSentLetters = default(int);
+            CountAllSpamLetters = default(int);
+            CountDontReadSpamLetters = default(int);
+        }
 
-        public int? CountAllIncomingLetters { get; set; }
-        public int? CountDontReadIncomingLetters { get; set; }
-        public int? CountASentLetters { get; set; }
-        public int? CountDontReadSentLetters { get; set; }
-        public int? CountAllSpamLetters { get; set; }
-        public int? CountDontReadSpamLetters { get; set; }
+        public int MaxIndexInUserTeables { get; set; }
+        public int MinIndexInUserTeables { get; set; }
+
+        public int CountAllIncomingLetters { get; set; }
+        public int CountDontReadIncomingLetters { get; set; }
+        public int CountASentLetters { get; set; }
+        public int CountDontReadSentLetters { get; set; }
+        public int CountAllSpamLetters { get; set; }
+        public int CountDontReadSpamLetters { get; set; }
     }
 
     public class LocalPasswordModel

@@ -6,7 +6,7 @@
 
         <ul class="headerBodyRight hr">
             <li>
-                @Html.ActionLink("Hello " + User.Identity.Name + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "linksHeaderBody" })
+                @Html.ActionLink("Hello " + User.Identity.Name + "!", "Index", "Home", routeValues: null, htmlAttributes: new { title = "Manage", @class = "linksHeaderBody" })
             </li>
             <li><a class="linksHeaderBody" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
         </ul>
