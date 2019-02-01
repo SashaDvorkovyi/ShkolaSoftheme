@@ -72,7 +72,7 @@ namespace YourMail.Controllers
                         var ListIncomingLetters = new List<IncomingLetter>();
                         for(var i=0; i<UserProfile.MaxIncomingLetters; i++)
                         {
-                            ListIncomingLetters.Add(new IncomingLetter(user.Id));
+                            ListIncomingLetters.Add(new IncomingLetter(user.UserMail));
                         }
                         db.IncomingLetters.AddRange(ListIncomingLetters);
 
@@ -80,14 +80,14 @@ namespace YourMail.Controllers
                         var ListSendLetter = new List<SendLetter>();
                         for (var i = 0; i < UserProfile.MaxIncomingLetters; i++)
                         {
-                            ListSendLetter.Add(new SendLetter(user.Id));
+                            ListSendLetter.Add(new SendLetter(user.UserMail));
                         }
                         db.SendLetters.AddRange(ListSendLetter);
 
                         var ListSpamLetter = new List<SpamLetter>(user.Id);
                         for (var i = 0; i < UserProfile.MaxIncomingLetters; i++)
                         {
-                            ListSpamLetter.Add(new SpamLetter(user.Id));
+                            ListSpamLetter.Add(new SpamLetter(user.UserMail));
                         }
                         db.SpamLetters.AddRange(ListSpamLetter);
 

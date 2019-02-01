@@ -31,7 +31,7 @@ namespace YourMail.Filters
                 {
                     using (var context = new DataBaseContext())
                     {
-                        //context.Database.Delete();
+                        context.Database.Delete();
                         if (!context.Database.Exists())
                         {
                             ((IObjectContextAdapter)context).ObjectContext.CreateDatabase();

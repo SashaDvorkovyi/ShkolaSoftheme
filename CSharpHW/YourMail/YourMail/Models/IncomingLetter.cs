@@ -5,9 +5,11 @@ namespace YourMail.Models
 {
     public class IncomingLetter : ITypesOfLetter
     {
-        public IncomingLetter(int orderId)
+        public IncomingLetter() { }
+
+        public IncomingLetter(string orderMail)
         {
-            this.OrderId = orderId;
+            this.OrderMail = orderMail;
         }
 
         public int Id { get; set; }
@@ -16,7 +18,7 @@ namespace YourMail.Models
 
         public bool IsRead { get; set; }
 
-        public int? OrderId { get; set; }
+        public string OrderMail { get; set; }
 
         public string Subject { get; set; }
 

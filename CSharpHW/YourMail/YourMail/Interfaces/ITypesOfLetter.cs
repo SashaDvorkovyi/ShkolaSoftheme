@@ -14,7 +14,7 @@ namespace YourMail.Interfaces
 
         bool IsRead { get; set; }
 
-        int? OrderId { get; set; }
+        string OrderMail { get; set; }
 
         string Subject { get; set; }
 

@@ -5,9 +5,11 @@ namespace YourMail.Models
 {
     public class SpamLetter : ITypesOfLetter
     {
-        public SpamLetter(int orderId)
+        public SpamLetter() { }
+
+        public SpamLetter(string orderMail)
         {
-            this.OrderId = orderId;
+            this.OrderMail = orderMail;
         }
 
         public int Id { get; set; }
@@ -16,7 +18,7 @@ namespace YourMail.Models
 
         public bool IsRead { get; set; }
 
-        public int? OrderId { get; set; }
+        public string OrderMail { get; set; }
 
         public string Subject { get; set; }
 

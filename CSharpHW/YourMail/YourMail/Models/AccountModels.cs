@@ -29,6 +29,19 @@ namespace YourMail.Models
             CountAllSpamLetters = default(int);
             CountDontReadSpamLetters = default(int);
         }
+        public UserProfile(string userMail)
+        {
+            this.UserMail = userMail;
+
+            MaxIndexInUserTeables = default(int);
+            MinIndexInUserTeables = default(int);
+            CountAllIncomingLetters = default(int);
+            CountDontReadIncomingLetters = default(int);
+            CountASentLetters = default(int);
+            CountDontReadSentLetters = default(int);
+            CountAllSpamLetters = default(int);
+            CountDontReadSpamLetters = default(int);
+        }
 
         public int MaxIndexInUserTeables { get; set; }
         public int MinIndexInUserTeables { get; set; }
