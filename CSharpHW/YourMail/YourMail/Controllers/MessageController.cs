@@ -29,55 +29,39 @@ namespace YourMail.Controllers
             {
                 var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == User.Identity.Name);
 
-                var ok1 = SaveNewLetterInDB(letter, user, db);
+                var okList = new List<bool>();
 
-                var ok2 = SaveITypeOfLetterInDB<SendLetter>(letter, db.SendLetters, user, letter.ToWhom, db);
+                okList.Add(SaveNewLetterInDB(letter, user, db));
 
+                okList.Add(SaveITypeOfLetterInDB<SendLetter>(letter, db.SendLetters, user, letter.ToWhom, db));
 
+                var allResipient = GetAllRecipient(letter, db);
 
-                var listRecipientUserProfile = new List<UserProfile>();
-                var listRecipientPerson = new List<string>();
-                var mail = default(string);
-                foreach (char x in letter.ToWhom)
+                var listSpamEmail = db.SpamMeils.Skip(user.Id * UserProfile.MaxSentLetters - UserProfile.MaxSentLetters)
+                                    .Take(UserProfile.MaxSentLetters);
+
+                if (allResipient.Count() != 0)
                 {
-                    
-                    if (x != ' ')
+                    foreach (var userProf in allResipient)
                     {
-                        if (mail[mail.Length - 1] == ',' || mail[mail.Length - 1] == ';')
+                        var isSave = false;
+                        foreach (var spamEmail in listSpamEmail)
                         {
-                            mail.Substring(0, mail.Length - 1);
+                            if (spamEmail.ToWhomMail == userProf.UserMail)
+                            {
+                                okList.Add(SaveITypeOfLetterInDB<SpamLetter>(letter, db.SpamLetters, userProf, user.UserMail, db));
+                                isSave = true;
+                                break;
+                            }
                         }
-                        else
+                        if (isSave == false)
                         {
-                            listRecipientPerson.Add(mail);
-                            listRecipientUserProfile.Add(new UserProfile(mail));
-                            mail = default(string);
+                            okList.Add(SaveITypeOfLetterInDB<IncomingLetter>(letter, db.IncomingLetters, userProf, user.UserMail, db));
                         }
-                    }
-                    else
-                    {
-                        mail += x;
                     }
                 }
-                db.UserProfiles.Join(listRecipientPerson, x => x.UserMail, y => y, (x, y) => x);
 
-                var res = Splitting.Join(Customer,
-                 s => s.CustomerId,
-                 c => c.Id,
-                 (s, c) => new { s, c })
-           .Where(sc => sc.c.Id == userId && sc.c.CompanyId == companId)
-           .Select(sc => sc.s);
-                db.UserProfiles.Intersect(listRecipientUserProfile, new UserProfile());
-                //SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate
-                //FROM Orders
-                //INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID;
-                var b= from x in db.UserProfiles 
-                       from y in listRecipientPerson
 
-                var a = SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate
- FROM Orders
- INNER JOIN Customers
-ON Orders.CustomerID = Customers.CustomerID;
             }
             return RedirectToAction("Index", "Home");
         }
@@ -98,15 +82,17 @@ ON Orders.CustomerID = Customers.CustomerID;
             }
         }
 
-        public bool SaveITypeOfLetterInDB<T>(Letter letter, DbSet<T> tebl, UserProfile userOrder, string userToOrFromWhomMail, DataBaseContext db) where T : class, ITypesOfLetter, new ()
+        public bool SaveITypeOfLetterInDB<T>(Letter letter, DbSet<T> tebl, UserProfile userOrder, string userToOrFromWhomMail, DataBaseContext db) where T : class, ITypesOfLetter, new()
         {
             try
             {
                 var TLetter = new T();
 
-                if (userOrder.CountAllSpamLetters < UserProfile.MaxIncomingLetters)
+                if (userOrder.CountAllSpamLetters==null || userOrder.CountAllSpamLetters < UserProfile.MaxIncomingLetters)
                 {
                     TLetter = tebl.FirstOrDefault(x => x.IsExist == false);
+                    TLetter = tebl.Skip(userOrder.Id * UserProfile.MaxSentLetters - UserProfile.MaxSentLetters)
+                                  .First(x => x.IsExist == false);
                 }
                 else
                 {
@@ -119,7 +105,7 @@ ON Orders.CustomerID = Customers.CustomerID;
                 TLetter.ToOrFromWhomMail = userToOrFromWhomMail;
                 TLetter.Subject = letter.Subject;
                 TLetter.IsExist = true;
-                TLetter.OrderMail= userOrder.UserMail;
+                TLetter.OrderMail = userOrder.UserMail;
                 db.Entry(TLetter).State = EntityState.Modified;
                 db.SaveChanges();
 
@@ -129,6 +115,37 @@ ON Orders.CustomerID = Customers.CustomerID;
             {
                 return false;
             }
+        }
+
+        public IQueryable<UserProfile> GetAllRecipient(Letter letter, DataBaseContext db)
+        {
+            var listRecipientPerson = new List<string>();
+            var mail = default(string);
+            foreach (char x in letter.ToWhom)
+            {
+
+                if (x != ' ' && mail != null)
+                {
+                    if (mail[mail.Length - 1] == ',' || mail[mail.Length - 1] == ';')
+                    {
+                        mail.Substring(0, mail.Length - 1);
+                    }
+                    else
+                    {
+                        listRecipientPerson.Add(mail);
+                        mail = default(string);
+                    }
+                }
+                else if(x != ' ' && mail == null)
+                {
+
+                }
+                else
+                {
+                    mail += x;
+                }
+            }
+            return db.UserProfiles.Join(listRecipientPerson, x => x.UserMail, y => y, (x, y) => x);
         }
     }
 }
