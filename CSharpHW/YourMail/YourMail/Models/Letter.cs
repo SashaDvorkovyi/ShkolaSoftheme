@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,6 +10,10 @@ namespace YourMail.Models
         public Letter()
         {
             Date = DateTime.Now;
+            IncomingLetters = new List<IncomingLetter>();
+            SendLetters = new List<SendLetter>();
+            SpamLetters = new List<SpamLetter>();
+            SpamMeils = new List<SpamMeil>();
         }
 
         [Key]
@@ -28,5 +33,10 @@ namespace YourMail.Models
         string NameOfFile { get; set; }
 
         string AdresOfFile { get; set; }
+
+        public virtual ICollection<IncomingLetter> IncomingLetters { get; set; }
+        public virtual ICollection<SendLetter> SendLetters { get; set; }
+        public virtual ICollection<SpamLetter> SpamLetters { get; set; }
+        public virtual ICollection<SpamMeil> SpamMeils { get; set; }
     }
 }

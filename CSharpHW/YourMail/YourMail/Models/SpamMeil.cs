@@ -14,5 +14,7 @@ namespace YourMail.Models
         public int OrderId { get; set; }
 
         public string ToWhomMail { get; set; }
+
+        public virtual UserProfile OrderUser { get; set; }
     }
 }

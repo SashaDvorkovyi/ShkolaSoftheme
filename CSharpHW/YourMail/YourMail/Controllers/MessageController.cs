@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using WebMatrix.WebData;
 using YourMail.Models;
 using YourMail.Interfaces;
-
+using System.Web.Security;
 
 namespace YourMail.Controllers
 {
@@ -29,91 +29,63 @@ namespace YourMail.Controllers
             {
                 var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == User.Identity.Name);
 
-                var okList = new List<bool>();
+                SaveNewLetterInDB(letter, user, db);
 
-                okList.Add(SaveNewLetterInDB(letter, user, db));
-
-                okList.Add(SaveITypeOfLetterInDB<SendLetter>(letter, db.SendLetters, user, letter.ToWhom, db));
+                SaveITypeOfLetterInDB<SendLetter>(letter, db.SendLetters, user, letter.ToWhom, db);
 
                 var allResipient = GetAllRecipient(letter, db);
 
                 var listSpamEmail = db.SpamMeils.Skip(user.Id * UserProfile.MaxSentLetters - UserProfile.MaxSentLetters)
                                     .Take(UserProfile.MaxSentLetters);
 
-                if (allResipient.Count() != 0)
-                {
-                    foreach (var userProf in allResipient)
-                    {
-                        var isSave = false;
-                        foreach (var spamEmail in listSpamEmail)
-                        {
-                            if (spamEmail.ToWhomMail == userProf.UserMail)
-                            {
-                                okList.Add(SaveITypeOfLetterInDB<SpamLetter>(letter, db.SpamLetters, userProf, user.UserMail, db));
-                                isSave = true;
-                                break;
-                            }
-                        }
-                        if (isSave == false)
-                        {
-                            okList.Add(SaveITypeOfLetterInDB<IncomingLetter>(letter, db.IncomingLetters, userProf, user.UserMail, db));
-                        }
-                    }
-                }
 
 
             }
             return RedirectToAction("Index", "Home");
         }
 
-        public bool SaveNewLetterInDB(Letter letter, UserProfile user, DataBaseContext db)
+        public void SaveNewLetterInDB(Letter letter, UserProfile user, DataBaseContext db)
         {
-            try
-            {
-                letter.FromWhom = user.UserMail;
-                db.Letters.Add(letter);
-                db.SaveChanges();
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            letter.FromWhom = user.UserMail;
+            db.Letters.Add(letter);
+            db.SaveChanges();
         }
 
-        public bool SaveITypeOfLetterInDB<T>(Letter letter, DbSet<T> tebl, UserProfile userOrder, string userToOrFromWhomMail, DataBaseContext db) where T : class, ITypesOfLetter, new()
+        public void SaveITypeOfLetterInDB<T>(Letter letter, DbSet<T> tebl, UserProfile userOrder, string userToOrFromWhomMail, DataBaseContext db) where T : class, ITypesOfLetter, new()
         {
-            try
+            var tLetter = new T();
+
+            tLetter.Subject = letter.Subject;
+
+            tLetter.ToOrFromWhomMail = userToOrFromWhomMail;
+
+            tLetter.Date = letter.Date;
+
+            tLetter.OrderId = userOrder.Id;
+
+            tLetter.LetterId = letter.Id;
+
+            db.Entry(tLetter).State = EntityState.Added;
+
+            db.SaveChanges();
+
+            if (tLetter is IncomingLetter)
             {
-                var TLetter = new T();
-
-                if (userOrder.CountAllSpamLetters==null || userOrder.CountAllSpamLetters < UserProfile.MaxIncomingLetters)
-                {
-                    TLetter = tebl.FirstOrDefault(x => x.IsExist == false);
-                    TLetter = tebl.Skip(userOrder.Id * UserProfile.MaxSentLetters - UserProfile.MaxSentLetters)
-                                  .First(x => x.IsExist == false);
-                }
-                else
-                {
-                    TLetter = tebl.Skip(userOrder.Id * UserProfile.MaxSentLetters - UserProfile.MaxSentLetters)
-                                  .Take(UserProfile.MaxSentLetters)
-                                  .OrderBy(x => x.Date).First();
-                }
-
-                TLetter.Date = letter.Date;
-                TLetter.ToOrFromWhomMail = userToOrFromWhomMail;
-                TLetter.Subject = letter.Subject;
-                TLetter.IsExist = true;
-                TLetter.OrderMail = userOrder.UserMail;
-                db.Entry(TLetter).State = EntityState.Modified;
+                userOrder.CountAllIncomingLetters = userOrder.CountAllIncomingLetters == null ? 1 : userOrder.CountAllIncomingLetters + 1;
+                userOrder.CountDontReadIncomingLetters = userOrder.CountDontReadIncomingLetters == null ? 1 : userOrder.CountDontReadIncomingLetters + 1;
                 db.SaveChanges();
-
-                return true;
             }
-            catch
+            else if (tLetter is SendLetter)
             {
-                return false;
+                userOrder.CountAllSendLetters = userOrder.CountAllSendLetters == null ? 1 : userOrder.CountAllSendLetters + 1;
+                userOrder.CountDontReadSendLetters = userOrder.CountDontReadSendLetters == null ? 1 : userOrder.CountDontReadSendLetters + 1;
+                db.SaveChanges();
+            }
+            else if (tLetter is SendLetter)
+            {
+                userOrder.CountAllSpamLetters = userOrder.CountAllSpamLetters == null ? 1 : userOrder.CountAllSpamLetters + 1;
+                userOrder.CountDontReadSpamLetters = userOrder.CountDontReadSpamLetters == null ? 1 : userOrder.CountDontReadSpamLetters + 1;
+                db.SaveChanges();
             }
         }
 
@@ -123,8 +95,7 @@ namespace YourMail.Controllers
             var mail = default(string);
             foreach (char x in letter.ToWhom)
             {
-
-                if (x != ' ' && mail != null)
+                if (x == ' ' && mail != null)
                 {
                     if (mail[mail.Length - 1] == ',' || mail[mail.Length - 1] == ';')
                     {
@@ -136,14 +107,15 @@ namespace YourMail.Controllers
                         mail = default(string);
                     }
                 }
-                else if(x != ' ' && mail == null)
-                {
-
-                }
                 else
                 {
                     mail += x;
                 }
+            }
+            if (mail != null)
+            {
+                listRecipientPerson.Add(mail);
+                mail = default(string);
             }
             return db.UserProfiles.Join(listRecipientPerson, x => x.UserMail, y => y, (x, y) => x);
         }

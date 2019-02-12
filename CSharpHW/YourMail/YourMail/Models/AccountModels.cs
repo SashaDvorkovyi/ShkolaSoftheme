@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using YourMail.Filters;
 
@@ -20,38 +21,23 @@ namespace YourMail.Models
 
         public UserProfile()
         {
-            MaxIndexInUserTeables = default(int);
-            MinIndexInUserTeables = default(int);
-            CountAllIncomingLetters = default(int);
-            CountDontReadIncomingLetters = default(int);
-            CountASentLetters = default(int);
-            CountDontReadSentLetters = default(int);
-            CountAllSpamLetters = default(int);
-            CountDontReadSpamLetters = default(int);
+            IncomingLetters = new List<IncomingLetter>();
+            SendLetters = new List<SendLetter>();
+            SpamLetters = new List<SpamLetter>();
+            SpamMeils = new List<SpamMeil>();
         }
-        public UserProfile(string userMail)
-        {
-            this.UserMail = userMail;
-
-            MaxIndexInUserTeables = default(int);
-            MinIndexInUserTeables = default(int);
-            CountAllIncomingLetters = default(int);
-            CountDontReadIncomingLetters = default(int);
-            CountASentLetters = default(int);
-            CountDontReadSentLetters = default(int);
-            CountAllSpamLetters = default(int);
-            CountDontReadSpamLetters = default(int);
-        }
-
-        public int? MaxIndexInUserTeables { get; set; }
-        public int? MinIndexInUserTeables { get; set; }
 
         public int? CountAllIncomingLetters { get; set; }
         public int? CountDontReadIncomingLetters { get; set; }
-        public int? CountASentLetters { get; set; }
-        public int? CountDontReadSentLetters { get; set; }
+        public int? CountAllSendLetters { get; set; }
+        public int? CountDontReadSendLetters { get; set; }
         public int? CountAllSpamLetters { get; set; }
         public int? CountDontReadSpamLetters { get; set; }
+
+        public virtual ICollection<IncomingLetter> IncomingLetters { get; set; }
+        public virtual ICollection<SendLetter> SendLetters { get; set; }
+        public virtual ICollection<SpamLetter> SpamLetters { get; set; }
+        public virtual ICollection<SpamMeil> SpamMeils { get; set; }
     }
 
     public class LocalPasswordModel

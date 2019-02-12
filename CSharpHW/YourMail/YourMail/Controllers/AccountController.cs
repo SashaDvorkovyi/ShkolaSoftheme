@@ -65,37 +65,6 @@ namespace YourMail.Controllers
                     
                     WebSecurity.CreateUserAndAccount(model.UserMail, model.Password);
                     WebSecurity.Login(model.UserMail, model.Password);
-                    using (var db = new DataBaseContext())
-                    {
-                        var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == model.UserMail);
-
-                        var ListIncomingLetters = new List<IncomingLetter>();
-                        for(var i=0; i<UserProfile.MaxIncomingLetters; i++)
-                        {
-                            ListIncomingLetters.Add(new IncomingLetter(user.UserMail));
-                        }
-                        db.IncomingLetters.AddRange(ListIncomingLetters);
-
-
-                        var ListSendLetter = new List<SendLetter>();
-                        for (var i = 0; i < UserProfile.MaxIncomingLetters; i++)
-                        {
-                            ListSendLetter.Add(new SendLetter(user.UserMail));
-                        }
-                        db.SendLetters.AddRange(ListSendLetter);
-
-                        var ListSpamLetter = new List<SpamLetter>(user.Id);
-                        for (var i = 0; i < UserProfile.MaxIncomingLetters; i++)
-                        {
-                            ListSpamLetter.Add(new SpamLetter(user.UserMail));
-                        }
-                        db.SpamLetters.AddRange(ListSpamLetter);
-
-                        user.MinIndexInUserTeables = user.Id*UserProfile.MaxIncomingLetters - UserProfile.MaxIncomingLetters + 1;
-                        user.MaxIndexInUserTeables = user.Id * UserProfile.MaxIncomingLetters;
-                        db.Entry(user).State = EntityState.Modified;
-                        db.SaveChanges();
-                    }
 
                     return RedirectToAction("Index", "Home");
                 }
