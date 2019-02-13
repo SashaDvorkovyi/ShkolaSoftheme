@@ -30,7 +30,6 @@ namespace YourMail.Models
         public int? CountAllIncomingLetters { get; set; }
         public int? CountDontReadIncomingLetters { get; set; }
         public int? CountAllSendLetters { get; set; }
-        public int? CountDontReadSendLetters { get; set; }
         public int? CountAllSpamLetters { get; set; }
         public int? CountDontReadSpamLetters { get; set; }
 
