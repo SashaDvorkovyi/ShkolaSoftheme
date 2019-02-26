@@ -31,7 +31,9 @@ namespace YourMail.Controllers
 
                 SaveNewLetterInDB(letter, user, db);
 
-                SaveITypeOfLetterInDB<SendLetter>(letter, db.SendLetters, user, letter.ToWhom);
+                db.Entry(SaveITypeOfLetterInDB<SendLetter>(letter, db.SendLetters, user, letter.ToWhom)).State = EntityState.Added;
+
+                db.Entry(ChengeUser<SendLetter>(db.SendLetters, user)).State = EntityState.Modified;
 
                 var allResipient = GetAllRecipient(letter, db);
 
@@ -42,14 +44,19 @@ namespace YourMail.Controllers
                     {
                         if (spamMail.ToWhomMail == user.UserMail)
                         {
-                            SaveITypeOfLetterInDB<SpamLetter>(letter, db.SpamLetters, resipient, user.UserMail);
+                            db.Entry(SaveITypeOfLetterInDB<SpamLetter>(letter, db.SpamLetters, resipient, user.UserMail)).State = EntityState.Added;
+
+                            db.Entry(ChengeUser<SpamLetter>(db.SpamLetters, resipient)).State = EntityState.Modified;
+
                             send = true;
                             break;
                         }
                     }
                     if (send != true)
                     {
-                        SaveITypeOfLetterInDB<IncomingLetter>(letter, db.IncomingLetters, resipient, user.UserMail);
+                        db.Entry(SaveITypeOfLetterInDB<IncomingLetter>(letter, db.IncomingLetters, resipient, user.UserMail)).State = EntityState.Added;
+
+                        db.Entry(ChengeUser<IncomingLetter>(db.IncomingLetters, resipient)).State = EntityState.Modified;
                     }
                 }
             }
@@ -63,10 +70,8 @@ namespace YourMail.Controllers
             db.SaveChanges();
         }
 
-        public void SaveITypeOfLetterInDB<T>(Letter letter, DbSet<T> tebl, UserProfile userOrder, string userToOrFromWhomMail) where T : class, ITypesOfLetter, new()
+        public T SaveITypeOfLetterInDB<T>(Letter letter, DbSet<T> tebl, UserProfile userOrder, string userToOrFromWhomMail) where T : class, ITypesOfLetter, new()
         {
-            using(var db=new DataBaseContext())
-            {
                 var tLetter = new T();
 
                 tLetter.Subject = letter.Subject;
@@ -79,28 +84,7 @@ namespace YourMail.Controllers
 
                 tLetter.LetterId = letter.Id;
 
-                db.Entry(tLetter).State = EntityState.Added;
-
-                db.SaveChanges();
-
-                if (tLetter is IncomingLetter)
-                {
-                    userOrder.CountAllIncomingLetters = userOrder.CountAllIncomingLetters == null ? 1 : userOrder.CountAllIncomingLetters + 1;
-                    userOrder.CountDontReadIncomingLetters = userOrder.CountDontReadIncomingLetters == null ? 1 : userOrder.CountDontReadIncomingLetters + 1;
-                    db.SaveChanges();
-                }
-                else if (tLetter is SendLetter)
-                {
-                    userOrder.CountAllSendLetters = userOrder.CountAllSendLetters == null ? 1 : userOrder.CountAllSendLetters + 1;
-                    db.SaveChanges();
-                }
-                else if (tLetter is SendLetter)
-                {
-                    userOrder.CountAllSpamLetters = userOrder.CountAllSpamLetters == null ? 1 : userOrder.CountAllSpamLetters + 1;
-                    userOrder.CountDontReadSpamLetters = userOrder.CountDontReadSpamLetters == null ? 1 : userOrder.CountDontReadSpamLetters + 1;
-                    db.SaveChanges();
-                }
-            }  
+                return tLetter;
         }
 
         public IQueryable<UserProfile> GetAllRecipient(Letter letter, DataBaseContext db)
@@ -132,6 +116,31 @@ namespace YourMail.Controllers
                 mail = default(string);
             }
             return db.UserProfiles.Join(listRecipientPerson, x => x.UserMail, y => y, (x, y) => x).Include(x=>x.SpamMeils);
+        }
+
+        public UserProfile ChengeUser<T>(DbSet<T> tebl, UserProfile userOrder) where T : class, ITypesOfLetter, new()
+        {
+            if (new T() is IncomingLetter)
+            {
+                userOrder.CountAllIncomingLetters = userOrder.CountAllIncomingLetters == null ? 1 : userOrder.CountAllIncomingLetters + 1;
+                userOrder.CountDontReadIncomingLetters = userOrder.CountDontReadIncomingLetters == null ? 1 : userOrder.CountDontReadIncomingLetters + 1;
+                return userOrder;
+            }
+            else if (new T() is SendLetter)
+            {
+                userOrder.CountAllSendLetters = userOrder.CountAllSendLetters == null ? 1 : userOrder.CountAllSendLetters + 1;
+                return userOrder;
+            }
+            else if (new T() is SendLetter)
+            {
+                userOrder.CountAllSpamLetters = userOrder.CountAllSpamLetters == null ? 1 : userOrder.CountAllSpamLetters + 1;
+                userOrder.CountDontReadSpamLetters = userOrder.CountDontReadSpamLetters == null ? 1 : userOrder.CountDontReadSpamLetters + 1;
+                return userOrder;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
