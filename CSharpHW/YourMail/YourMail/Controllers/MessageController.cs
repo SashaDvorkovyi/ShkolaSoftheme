@@ -33,7 +33,9 @@ namespace YourMail.Controllers
 
                 db.Entry(SaveITypeOfLetterInDB<SendLetter>(letter, db.SendLetters, user, letter.ToWhom)).State = EntityState.Added;
 
+
                 db.Entry(ChengeUser<SendLetter>(db.SendLetters, user)).State = EntityState.Modified;
+
 
                 var allResipient = GetAllRecipient(letter, db);
 
@@ -45,9 +47,7 @@ namespace YourMail.Controllers
                         if (spamMail.ToWhomMail == user.UserMail)
                         {
                             db.Entry(SaveITypeOfLetterInDB<SpamLetter>(letter, db.SpamLetters, resipient, user.UserMail)).State = EntityState.Added;
-
                             db.Entry(ChengeUser<SpamLetter>(db.SpamLetters, resipient)).State = EntityState.Modified;
-
                             send = true;
                             break;
                         }
@@ -55,10 +55,10 @@ namespace YourMail.Controllers
                     if (send != true)
                     {
                         db.Entry(SaveITypeOfLetterInDB<IncomingLetter>(letter, db.IncomingLetters, resipient, user.UserMail)).State = EntityState.Added;
-
                         db.Entry(ChengeUser<IncomingLetter>(db.IncomingLetters, resipient)).State = EntityState.Modified;
                     }
                 }
+                db.SaveChanges();
             }
             return RedirectToAction("Index", "Home");
         }
@@ -67,7 +67,6 @@ namespace YourMail.Controllers
         {
             letter.FromWhom = user.UserMail;
             db.Letters.Add(letter);
-            db.SaveChanges();
         }
 
         public T SaveITypeOfLetterInDB<T>(Letter letter, DbSet<T> tebl, UserProfile userOrder, string userToOrFromWhomMail) where T : class, ITypesOfLetter, new()
@@ -97,7 +96,8 @@ namespace YourMail.Controllers
                 {
                     if (mail[mail.Length - 1] == ',' || mail[mail.Length - 1] == ';')
                     {
-                        mail.Substring(0, mail.Length - 1);
+                        listRecipientPerson.Add(mail.Substring(0, mail.Length - 1));
+                        mail = default(string);
                     }
                     else
                     {
