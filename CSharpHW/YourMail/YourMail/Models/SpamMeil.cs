@@ -11,7 +11,7 @@ namespace YourMail.Models
         [Key]
         public int Id { get; set; }
 
-        public int OrderId { get; set; }
+        public int? OrderUserId { get; set; }
 
         public string ToWhomMail { get; set; }
 

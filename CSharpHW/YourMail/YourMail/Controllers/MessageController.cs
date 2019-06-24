@@ -79,7 +79,7 @@ namespace YourMail.Controllers
 
                 tLetter.Date = letter.Date;
 
-                tLetter.OrderId = userOrder.Id;
+                tLetter.OrderUserId = userOrder.Id;
 
                 tLetter.LetterId = letter.Id;
 
@@ -115,6 +115,7 @@ namespace YourMail.Controllers
                 listRecipientPerson.Add(mail);
                 mail = default(string);
             }
+            listRecipientPerson = listRecipientPerson.Distinct().ToList();
             return db.UserProfiles.Join(listRecipientPerson, x => x.UserMail, y => y, (x, y) => x).Include(x=>x.SpamMeils);
         }
 

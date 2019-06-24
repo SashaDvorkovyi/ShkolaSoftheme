@@ -20,11 +20,11 @@ namespace YourMail.Interfaces
 
         DateTime? Date { get; set; }
 
-        int? OrderId { get; set; }
-
-        UserProfile OrderUser { get; set; }
+        int? OrderUserId { get; set; }
 
         int? LetterId { get; set; }
+
+        UserProfile OrderUser { get; set; }
 
         Letter Letter { get; set; }
     }

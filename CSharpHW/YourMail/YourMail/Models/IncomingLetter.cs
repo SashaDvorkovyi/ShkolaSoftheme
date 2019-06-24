@@ -17,11 +17,11 @@ namespace YourMail.Models
 
         public DateTime? Date { get; set; }
 
-        public int? OrderId { get; set; }
-
-        public virtual UserProfile OrderUser { get; set; }
+        public int? OrderUserId { get; set; }
 
         public int? LetterId { get; set; }
+
+        public virtual UserProfile OrderUser { get; set; }
 
         public virtual Letter Letter { get; set; }
     }

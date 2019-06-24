@@ -13,7 +13,6 @@ namespace YourMail.Models
             IncomingLetters = new List<IncomingLetter>();
             SendLetters = new List<SendLetter>();
             SpamLetters = new List<SpamLetter>();
-            SpamMeils = new List<SpamMeil>();
         }
 
         [Key]
@@ -30,13 +29,14 @@ namespace YourMail.Models
 
         public string ToWhom { get; set; }
 
-        string NameOfFile { get; set; }
+        public string NameOfFile { get; set; }
 
-        string AdresOfFile { get; set; }
+        public string AdresOfFile { get; set; }
+
+        public int NumberOfOwners { get; set; }
 
         public virtual ICollection<IncomingLetter> IncomingLetters { get; set; }
         public virtual ICollection<SendLetter> SendLetters { get; set; }
         public virtual ICollection<SpamLetter> SpamLetters { get; set; }
-        public virtual ICollection<SpamMeil> SpamMeils { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace YourMail.Models
 
         public DateTime? Date { get; set; }
 
-        public int? OrderId { get; set; }
+        public int? OrderUserId { get; set; }
 
         public virtual UserProfile OrderUser { get; set; }
 
