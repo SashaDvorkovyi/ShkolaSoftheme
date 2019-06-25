@@ -29,47 +29,71 @@ namespace YourMail.Controllers
             {
                 var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == User.Identity.Name);
 
-                SaveNewLetterInDB(letter, user, db);
+                db.Entry(SaveITypeOfLetterInDB<SendLetter>(letter, user, letter.ToWhom)).State = EntityState.Added;
 
-                db.Entry(SaveITypeOfLetterInDB<SendLetter>(letter, db.SendLetters, user, letter.ToWhom)).State = EntityState.Added;
+                db.Entry(ChengeUser<SendLetter>(user)).State = EntityState.Modified;
 
-
-                db.Entry(ChengeUser<SendLetter>(db.SendLetters, user)).State = EntityState.Modified;
-
-
-                var allResipient = GetAllRecipient(letter, db);
-
-                foreach(var resipient in allResipient)
+                foreach (var resipient in (db.UserProfiles.Join(GetAllRecipients(letter), x => x.UserMail, y => y, (x, y) => x).Include(x => x.SpamMeils)))
                 {
                     var send = false;
                     foreach(var spamMail in resipient.SpamMeils)
                     {
                         if (spamMail.ToWhomMail == user.UserMail)
                         {
-                            db.Entry(SaveITypeOfLetterInDB<SpamLetter>(letter, db.SpamLetters, resipient, user.UserMail)).State = EntityState.Added;
-                            db.Entry(ChengeUser<SpamLetter>(db.SpamLetters, resipient)).State = EntityState.Modified;
+                            db.Entry(SaveITypeOfLetterInDB<SpamLetter>(letter, resipient, user.UserMail)).State = EntityState.Added;
+                            db.Entry(ChengeUser<SpamLetter>(resipient)).State = EntityState.Modified;
                             send = true;
                             break;
                         }
                     }
                     if (send != true)
                     {
-                        db.Entry(SaveITypeOfLetterInDB<IncomingLetter>(letter, db.IncomingLetters, resipient, user.UserMail)).State = EntityState.Added;
-                        db.Entry(ChengeUser<IncomingLetter>(db.IncomingLetters, resipient)).State = EntityState.Modified;
+                        db.Entry(SaveITypeOfLetterInDB<IncomingLetter>(letter, resipient, user.UserMail)).State = EntityState.Added;
+                        db.Entry(ChengeUser<IncomingLetter>(resipient)).State = EntityState.Modified;
                     }
                 }
+
+                db.Letters.Add(CreateNewLetter(letter, user, GetAllRecipients(letter)));
+
                 db.SaveChanges();
             }
             return RedirectToAction("Index", "Home");
         }
 
-        public void SaveNewLetterInDB(Letter letter, UserProfile user, DataBaseContext db)
+        [Authorize]
+        public ActionResult AddSpamMail()
         {
-            letter.FromWhom = user.UserMail;
-            db.Letters.Add(letter);
+            return View();
         }
 
-        public T SaveITypeOfLetterInDB<T>(Letter letter, DbSet<T> tebl, UserProfile userOrder, string userToOrFromWhomMail) where T : class, ITypesOfLetter, new()
+        [HttpPost]
+        [Authorize]
+        public ActionResult AddSpamMail(SpamMeil spamMeil)
+        {
+            using (var db = new DataBaseContext())
+            {
+                var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == User.Identity.Name);
+
+                spamMeil.OrderUserId = user.Id;
+
+                db.Entry(spamMeil).State = EntityState.Added;
+
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("AddSpamMail", "Message");
+        }
+
+        //public void
+
+        public Letter CreateNewLetter(Letter letter, UserProfile user, List<string> allRecipients)
+        {
+            letter.FromWhom = user.UserMail;
+            letter.NumberOfOwners = allRecipients.Count + 1; //"+1" This is the user who sent the letter
+            return letter;
+        }
+
+        public T SaveITypeOfLetterInDB<T>(Letter letter, UserProfile userOrder, string userToOrFromWhomMail) where T : class, ITypesOfLetter, new()
         {
                 var tLetter = new T();
 
@@ -86,7 +110,7 @@ namespace YourMail.Controllers
                 return tLetter;
         }
 
-        public IQueryable<UserProfile> GetAllRecipient(Letter letter, DataBaseContext db)
+        public List<string> GetAllRecipients(Letter letter)
         {
             var listRecipientPerson = new List<string>();
             var mail = default(string);
@@ -115,11 +139,10 @@ namespace YourMail.Controllers
                 listRecipientPerson.Add(mail);
                 mail = default(string);
             }
-            listRecipientPerson = listRecipientPerson.Distinct().ToList();
-            return db.UserProfiles.Join(listRecipientPerson, x => x.UserMail, y => y, (x, y) => x).Include(x=>x.SpamMeils);
+            return listRecipientPerson = listRecipientPerson.Distinct().ToList(); //delete all repetitions
         }
 
-        public UserProfile ChengeUser<T>(DbSet<T> tebl, UserProfile userOrder) where T : class, ITypesOfLetter, new()
+        public UserProfile ChengeUser<T>( UserProfile userOrder) where T : class, ITypesOfLetter, new()
         {
             if (new T() is IncomingLetter)
             {
@@ -132,7 +155,7 @@ namespace YourMail.Controllers
                 userOrder.CountAllSendLetters = userOrder.CountAllSendLetters == null ? 1 : userOrder.CountAllSendLetters + 1;
                 return userOrder;
             }
-            else if (new T() is SendLetter)
+            else if (new T() is SpamLetter)
             {
                 userOrder.CountAllSpamLetters = userOrder.CountAllSpamLetters == null ? 1 : userOrder.CountAllSpamLetters + 1;
                 userOrder.CountDontReadSpamLetters = userOrder.CountDontReadSpamLetters == null ? 1 : userOrder.CountDontReadSpamLetters + 1;

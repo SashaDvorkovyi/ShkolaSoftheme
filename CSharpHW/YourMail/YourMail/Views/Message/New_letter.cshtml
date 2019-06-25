@@ -1,7 +1,7 @@
 ﻿@model  YourMail.Models.Letter
 
 @{
-    ViewBag.Title = "New_letter";
+    ViewBag.Title = "New letter";
 }
 
 <hgroup class="title">
@@ -19,10 +19,10 @@
             <ol>
                 <li>
                     @Html.LabelFor(x => x.FromWhom)
-                    @Html.Label("FromWhom", ": "+User.Identity.Name)
+                    @Html.Label("From Whom", ": "+User.Identity.Name)
                 </li>
                 <li>
-                    @Html.LabelFor(x => x.ToWhom)<br />
+                    @Html.LabelFor(x => x.ToWhom, "To whom")<br />
                     @Html.TextBoxFor(x => x.ToWhom)
                 </li>
                 <li>

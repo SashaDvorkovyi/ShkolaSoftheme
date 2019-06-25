@@ -13,6 +13,7 @@ namespace YourMail.Models
 
         public int? OrderUserId { get; set; }
 
+        [EmailAddress]
         public string ToWhomMail { get; set; }
 
         public virtual UserProfile OrderUser { get; set; }
