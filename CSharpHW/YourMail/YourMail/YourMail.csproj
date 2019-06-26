@@ -233,6 +233,7 @@
     <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
     <Content Include="Views\Message\New_letter.cshtml" />
     <Content Include="Views\Message\AddSpamMail.cshtml" />
+    <Content Include="Views\Message\ShowTypeLetters.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

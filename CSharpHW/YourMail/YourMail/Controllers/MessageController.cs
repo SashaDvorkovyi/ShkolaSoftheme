@@ -84,7 +84,32 @@ namespace YourMail.Controllers
             return RedirectToAction("AddSpamMail", "Message");
         }
 
-        //public void
+        [Authorize]
+        public ActionResult ShowTypesLetters(int numberOfType)
+        {
+            var currentUserId = WebSecurity.CurrentUserId;
+            var listLetters = new List<ITypesOfLetter>();
+            using (var db =new DataBaseContext())
+            {
+                if (numberOfType == 1)
+                {
+                    listLetters = db.IncomingLetters.Where(x => x.OrderUserId == currentUserId).Select(x => (ITypesOfLetter)x).OrderBy(x => x.Date).ToList();
+                    ViewBag.Title = "Incoming letters";
+                }
+                else if(numberOfType == 2)
+                {
+                    listLetters = db.SendLetters.Where(x => x.OrderUserId == currentUserId).Select(x => (ITypesOfLetter)x).OrderBy(x => x.Date).ToList();
+                    ViewBag.Title = "Send letters";
+                }
+                else if (numberOfType == 3)
+                {
+                    listLetters = db.SpamLetters.Where(x => x.OrderUserId == currentUserId).Select(x => (ITypesOfLetter)x).OrderBy(x => x.Date).ToList();
+                    ViewBag.Title = "Spam letters";
+                }
+            }
+
+            return View(listLetters);
+        }
 
         public Letter CreateNewLetter(Letter letter, UserProfile user, List<string> allRecipients)
         {

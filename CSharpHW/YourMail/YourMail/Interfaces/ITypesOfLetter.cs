@@ -12,6 +12,8 @@ namespace YourMail.Interfaces
         [Key]
         int Id { get; set; }
 
+        bool Active { get; set; }
+
         bool IsRead { get; set; }
 
         string Subject { get; set; }

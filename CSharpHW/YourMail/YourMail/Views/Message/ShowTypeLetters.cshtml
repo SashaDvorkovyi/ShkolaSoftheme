@@ -1,0 +1,51 @@
+﻿@{
+    var grid = new WebGrid(Model);
+}
+
+<hgroup class="title">
+    <h2>@ViewBag.Title.</h2>
+</hgroup>
+
+<section>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <legend>Write spam mail:</legend>
+            <ul>
+                <li>
+                    @Html.LabelFor(x => x.ToWhomMail, "Mail")
+                    <br />
+                    @Html.TextBoxFor(x => x.ToWhomMail)
+                    @Html.ValidationMessageFor(x => x.ToWhomMail)
+                </li>
+            </ul>
+            <input type="submit" value="Send" />
+        </fieldset>
+    }
+</section>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+@*@{
+    ViewBag.Title = "WebGrid Columns";
+
+    var grid = new WebGrid(Model);
+}
+
+<form method="post">
+    <input type="text" name="id" />
+    <input type="submit" value="ok">
+</form>
+<h2>WebGrid Columns</h2>
+
+@grid.GetHtml(
+    columns: grid.Columns(
+        grid.Column(columnName: "Name", header: "Имя"),
+        grid.Column(header: "Скачать браузер", format: @<a href="@item.Url">Скачать @item.Name</a>),
+                grid.Column(format: @<form method="post"><input type="hidden" name="id" value="@item.ID" /><input type="submit" value="Open" /></form>),
+                        grid.Column(format: @<form method="post"><input type="hidden" name="id" value="@item.ID" /><input type="submit" value="Delete" /></form>)))*@ 
