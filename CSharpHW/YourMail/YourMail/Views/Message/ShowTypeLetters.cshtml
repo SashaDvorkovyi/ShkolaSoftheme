@@ -12,40 +12,19 @@
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true)
 
-        <fieldset>
-            <legend>Write spam mail:</legend>
-            <ul>
-                <li>
-                    @Html.LabelFor(x => x.ToWhomMail, "Mail")
-                    <br />
-                    @Html.TextBoxFor(x => x.ToWhomMail)
-                    @Html.ValidationMessageFor(x => x.ToWhomMail)
-                </li>
-            </ul>
-            <input type="submit" value="Send" />
-        </fieldset>
+      <fieldset>
+        @grid.GetHtml(columns: grid.Columns(
+              grid.Column(columnName: "Active"),
+              grid.Column(columnName: "Date", header: "Date"),
+              grid.Column(columnName: "ToOrFromWhomMail", header: "To whom"),
+              grid.Column(columnName: "Subject", header: "Subject"),
+              grid.Column(format: @<form method="post" action="~/Controllers/OpenLetter"><input type="hidden" name="id" value="@item.Id" /><input type="submit" value="Open" /></form>),
+              grid.Column(format: @<form method="post" action="~/Controllers/DoleteOneLetter"><input type="hidden" name="id" value="@item.Id" /><input type="submit" value="Delete" /></form>)))
+        <input type="submit" value="Delete all selected"  />
+      </fieldset>
     }
 </section>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
-
-@*@{
-    ViewBag.Title = "WebGrid Columns";
-
-    var grid = new WebGrid(Model);
-}
-
-<form method="post">
-    <input type="text" name="id" />
-    <input type="submit" value="ok">
-</form>
-<h2>WebGrid Columns</h2>
-
-@grid.GetHtml(
-    columns: grid.Columns(
-        grid.Column(columnName: "Name", header: "Имя"),
-        grid.Column(header: "Скачать браузер", format: @<a href="@item.Url">Скачать @item.Name</a>),
-                grid.Column(format: @<form method="post"><input type="hidden" name="id" value="@item.ID" /><input type="submit" value="Open" /></form>),
-                        grid.Column(format: @<form method="post"><input type="hidden" name="id" value="@item.ID" /><input type="submit" value="Delete" /></form>)))*@ 

@@ -179,6 +179,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\IncomingLetter.cs" />
     <Compile Include="Models\Letter.cs" />
+    <Compile Include="Models\NumberOfTypes.cs" />
     <Compile Include="Models\SendLetter.cs" />
     <Compile Include="Models\SpamLetter.cs" />
     <Compile Include="Models\SpamMeil.cs" />
