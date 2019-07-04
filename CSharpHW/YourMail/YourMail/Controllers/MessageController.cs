@@ -8,6 +8,7 @@ using WebMatrix.WebData;
 using YourMail.Models;
 using YourMail.Interfaces;
 using System.Web.Security;
+using YourMail.Infrastructure;
 
 namespace YourMail.Controllers
 {
@@ -85,35 +86,48 @@ namespace YourMail.Controllers
         }
 
         [Authorize]
-        public ActionResult ShowTypesLetters(string numberOfType)
+        public ActionResult ShowTypesLetters(int? numberOfType)
         {
             var currentUserId = WebSecurity.CurrentUserId;
-            var a = numberOfType;
             var listLetters = new List<ITypesOfLetter>();
-            using (var db =new DataBaseContext())
+            if (numberOfType != null)
             {
-                //if (numberOfType == (int)NumberOfTypes.IncomingLetters)
-                //{
-                //    listLetters = db.IncomingLetters.Where(x => x.OrderUserId == currentUserId).Select(x => (ITypesOfLetter)x).OrderBy(x => x.Date).ToList();
-                //    ViewBag.Title = "Incoming letters";
-                //}
-                //else if(numberOfType == (int)NumberOfTypes.SendLetters)
-                //{
-                //    listLetters = db.SendLetters.Where(x => x.OrderUserId == currentUserId).Select(x => (ITypesOfLetter)x).OrderBy(x => x.Date).ToList();
-                //    ViewBag.Title = "Send letters";
-                //}
-                //else if (numberOfType == (int)NumberOfTypes.SpamLetters)
-                //{
-                //    listLetters = db.SpamLetters.Where(x => x.OrderUserId == currentUserId).Select(x => (ITypesOfLetter)x).OrderBy(x => x.Date).ToList();
-                //    ViewBag.Title = "Spam letters";
-                //}
+                using (var db = new DataBaseContext())
+                {
+                    if (numberOfType == (int)NumberOfTypes.IncomingLetters)
+                    {
+                        var listIncomingLetters = db.IncomingLetters.Where(x => x.OrderUserId == currentUserId).OrderBy(x => x.Date).ToList();
+                        foreach(var incomingLetter in listIncomingLetters)
+                        {
+                            listLetters.Add(incomingLetter);
+                        }
+                        ViewBag.Title = "Incoming letters";
+                    }
+                    else if (numberOfType == (int)NumberOfTypes.SendLetters)
+                    {
+                        listLetters = db.SendLetters.Where(x => x.OrderUserId == currentUserId).Select(x => (ITypesOfLetter)x).OrderBy(x => x.Date).ToList();
+                        ViewBag.Title = "Send letters";
+                    }
+                    else if (numberOfType == (int)NumberOfTypes.SpamLetters)
+                    {
+                        listLetters = db.SpamLetters.Where(x => x.OrderUserId == currentUserId).Select(x => (ITypesOfLetter)x).OrderBy(x => x.Date).ToList();
+                        ViewBag.Title = "Spam letters";
+                    }
+                }
             }
-            return View(listLetters);
+            if (listLetters.Count >= 1)
+            {
+                return View(listLetters);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
         [Authorize]
-        public ActionResult ShowTypesLetters(ITypesOfLetter[] tLetters)
+        public ActionResult ShowTypesLetters(IncomingLetter[] tLetters)
         {
 
             return View();

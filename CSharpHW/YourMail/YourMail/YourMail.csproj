@@ -175,11 +175,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\NumberOfTypes.cs" />
     <Compile Include="Interfaces\ITypesOfLetter.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\IncomingLetter.cs" />
     <Compile Include="Models\Letter.cs" />
-    <Compile Include="Models\NumberOfTypes.cs" />
     <Compile Include="Models\SendLetter.cs" />
     <Compile Include="Models\SpamLetter.cs" />
     <Compile Include="Models\SpamMeil.cs" />
@@ -234,7 +234,7 @@
     <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
     <Content Include="Views\Message\New_letter.cshtml" />
     <Content Include="Views\Message\AddSpamMail.cshtml" />
-    <Content Include="Views\Message\ShowTypeLetters.cshtml" />
+    <Content Include="Views\Message\ShowTypesLetters.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

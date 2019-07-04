@@ -1,5 +1,5 @@
 ﻿@{
-    var grid = new WebGrid(Model);
+    var grid = new WebGrid(source: Model, rowsPerPage: 5);
 }
 
 <hgroup class="title">
@@ -9,19 +9,14 @@
 <section>
     @using (Html.BeginForm())
     {
-        @Html.AntiForgeryToken()
-        @Html.ValidationSummary(true)
-
-      <fieldset>
         @grid.GetHtml(columns: grid.Columns(
-              grid.Column(columnName: "Active"),
               grid.Column(columnName: "Date", header: "Date"),
-              grid.Column(columnName: "ToOrFromWhomMail", header: "To whom"),
-              grid.Column(columnName: "Subject", header: "Subject"),
+              grid.Column(columnName: "ToOrFromWhomMail"),
+              grid.Column(columnName: "Subject", header: null)))
+              @*grid.Column(format: @<input type="checkbox" id="@item.Id" name="check" value="false"/>),
               grid.Column(format: @<form method="post" action="~/Controllers/OpenLetter"><input type="hidden" name="id" value="@item.Id" /><input type="submit" value="Open" /></form>),
-              grid.Column(format: @<form method="post" action="~/Controllers/DoleteOneLetter"><input type="hidden" name="id" value="@item.Id" /><input type="submit" value="Delete" /></form>)))
+              grid.Column(format: @<form method="post" action="~/Controllers/DoleteOneLetter"><input type="hidden" name="id" value="@item.Id" /><input type="submit" value="Delete" /></form>)))*@
         <input type="submit" value="Delete all selected"  />
-      </fieldset>
     }
 </section>
 
