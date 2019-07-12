@@ -127,9 +127,8 @@ namespace YourMail.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult ShowTypesLetters(IncomingLetter[] tLetters)
+        public ActionResult ShowTypesLetters(IEnumerable<IncomingLetter>[] tLetters)
         {
-
             return View();
         }
 
