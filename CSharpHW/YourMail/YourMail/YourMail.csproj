@@ -236,7 +236,9 @@
     <Content Include="Views\Message\AddSpamMail.cshtml" />
     <Content Include="Views\Message\ShowTypesLetters.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="files\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

@@ -30,7 +30,7 @@ namespace YourMail.Controllers
             {
                 var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == User.Identity.Name);
 
-                db.Entry(SaveITypeOfLetterInDB<SendLetter>(letter, user, letter.ToWhom)).State = EntityState.Added;
+                db.Entry(CreateTypeOfLetter<SendLetter>(letter, user, letter.ToWhom)).State = EntityState.Added;
 
                 db.Entry(ChengeUser<SendLetter>(user)).State = EntityState.Modified;
 
@@ -41,7 +41,7 @@ namespace YourMail.Controllers
                     {
                         if (spamMail.ToWhomMail == user.UserMail)
                         {
-                            db.Entry(SaveITypeOfLetterInDB<SpamLetter>(letter, resipient, user.UserMail)).State = EntityState.Added;
+                            db.Entry(CreateTypeOfLetter<SpamLetter>(letter, resipient, user.UserMail)).State = EntityState.Added;
                             db.Entry(ChengeUser<SpamLetter>(resipient)).State = EntityState.Modified;
                             send = true;
                             break;
@@ -49,7 +49,7 @@ namespace YourMail.Controllers
                     }
                     if (send != true)
                     {
-                        db.Entry(SaveITypeOfLetterInDB<IncomingLetter>(letter, resipient, user.UserMail)).State = EntityState.Added;
+                        db.Entry(CreateTypeOfLetter<IncomingLetter>(letter, resipient, user.UserMail)).State = EntityState.Added;
                         db.Entry(ChengeUser<IncomingLetter>(resipient)).State = EntityState.Modified;
                     }
                 }
@@ -105,18 +105,27 @@ namespace YourMail.Controllers
                     }
                     else if (numberOfType == (int)NumberOfTypes.SendLetters)
                     {
-                        listLetters = db.SendLetters.Where(x => x.OrderUserId == currentUserId).Select(x => (ITypesOfLetter)x).OrderBy(x => x.Date).ToList();
+                        var list = db.SendLetters.Where(x => x.OrderUserId == currentUserId).OrderBy(x => x.Date).ToList();
+                        foreach(var item in list)
+                        {
+                            listLetters.Add(item);
+                        }
                         ViewBag.Title = "Send letters";
                     }
                     else if (numberOfType == (int)NumberOfTypes.SpamLetters)
                     {
-                        listLetters = db.SpamLetters.Where(x => x.OrderUserId == currentUserId).Select(x => (ITypesOfLetter)x).OrderBy(x => x.Date).ToList();
+                        var list = db.SpamLetters.Where(x => x.OrderUserId == currentUserId).OrderBy(x => x.Date).ToList();
+                        foreach (var item in list)
+                        {
+                            listLetters.Add(item);
+                        }
                         ViewBag.Title = "Spam letters";
                     }
                 }
             }
             if (listLetters.Count >= 1)
             {
+                ViewBag.NumberOfType = numberOfType;
                 return View(listLetters);
             }
             else
@@ -127,8 +136,9 @@ namespace YourMail.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult ShowTypesLetters(IEnumerable<IncomingLetter>[] tLetters)
+        public ActionResult ShowTypesLetters(int[] a, int? numberOfType)
         {
+            ViewBag.NumberOfType = numberOfType;
             return View();
         }
 
@@ -139,21 +149,9 @@ namespace YourMail.Controllers
             return letter;
         }
 
-        public T SaveITypeOfLetterInDB<T>(Letter letter, UserProfile userOrder, string userToOrFromWhomMail) where T : class, ITypesOfLetter, new()
+        public T CreateTypeOfLetter<T>(Letter letter, UserProfile userOrder, string userToOrFromWhomMail) where T : class, ITypesOfLetter, new()
         {
                 var tLetter = new T();
-            if(tLetter is IncomingLetter)
-            {
-                tLetter.NumberOfType = (int)NumberOfTypes.IncomingLetters;
-            }
-            else if(tLetter is SendLetter)
-            {
-                tLetter.NumberOfType = (int)NumberOfTypes.SendLetters;
-            }
-            else if(tLetter is SpamLetter)
-            {
-                tLetter.NumberOfType = (int)NumberOfTypes.SpamLetters;
-            }
 
                 tLetter.Subject = letter.Subject;
 

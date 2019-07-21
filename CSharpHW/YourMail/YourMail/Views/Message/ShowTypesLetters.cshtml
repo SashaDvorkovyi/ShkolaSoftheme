@@ -8,20 +8,64 @@
 </hgroup>
 
 <section>
-    @using (Html.BeginForm())
-    {
-        @grid.GetHtml();
-        @*@grid.GetHtml(columns: grid.Columns(
-            grid.Column(columnName: "Date", header: "Date"),
-            grid.Column(columnName: "ToOrFromWhomMail"),
-            grid.Column(columnName: "Subject", header: null)))
-            @*grid.Column(format: @<input type="checkbox" id="@item.Id" name="check" value="false"/>),
-            grid.Column(format: @<form method="post" action="~/Controllers/OpenLetter"><input type="hidden" name="id" value="@item.Id" /><input type="submit" value="Open" /></form>),
-            grid.Column(format: @<form method="post" action="~/Controllers/DoleteOneLetter"><input type="hidden" name="id" value="@item.Id" /><input type="submit" value="Delete" /></form>)))*@
-        <input type="submit" value="Delete all selected" />
-    }
+    <input type="checkbox" id="CheckUncheckAllCheckbox" />
+    <input type="submit" id="SendIdLettersForDelete" value="Delete all selected" />
+    @grid.GetHtml(columns: grid.Columns(
+         grid.Column(format: @<input type="checkbox" name="@item.Id" class="CheckForDelete" />),
+         grid.Column(format: @<input type="hidden" name="@item.IsRead.ToString()" class="IsRead" />),
+         grid.Column(columnName: "Date", header: "Date", canSort: true),
+         grid.Column(columnName: "ToOrFromWhomMail", canSort: true),
+         grid.Column(columnName: "Subject", header: null, canSort: true),
+         grid.Column(format: @<form method="post" action="~/Controllers/OpenLetter"><input type="hidden" name="id" value="@item.Id" /><input type="submit" value="Open" /></form>),
+         grid.Column(format: @<form method="post" action="~/Controllers/DoleteOneLetter"><input type="hidden" name="id" value="@item.Id" /><input type="submit" value="Delete" /></form>)
+    ))
 </section>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="jquery-1.8.1.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    $(document).ready(function ()
+    {
+
+        stileForDontRead();
+        function stileForDontRead() {
+            $(".IsRead").each(function () {  
+                if ($(this).attr("name") === "False") {
+                    $(this).closest("tr").css({ "border-color": "#008a77", "border-style": "solid" });
+                }
+            });
+        }
+        
+
+        var arrayIdOfLetters = new Array();
+        $("#SendIdLettersForDelete").on("click", function ()
+        {
+            $(".CheckForDelete").each(function ()
+            {
+                if ($(this).prop("checked") === true)
+                {
+                    var idLetterForDelete = $(this).attr("name");
+                    arrayIdOfLetters.push(idLetterForDelete);
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("ShowTypesLetters", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType })",
+                data: JSON.stringify(arrayIdOfLetters),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            });
+        });
+
+        $("#CheckUncheckAllCheckbox").change(function ()
+        {
+            var checkUnchek = $(this).prop("checked");
+            $(".CheckForDelete").prop("checked", checkUnchek);
+        });
+    });
+</script>
