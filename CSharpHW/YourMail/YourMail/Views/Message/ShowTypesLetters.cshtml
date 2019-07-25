@@ -16,8 +16,8 @@
          grid.Column(columnName: "Date", header: "Date", canSort: true),
          grid.Column(columnName: "ToOrFromWhomMail", canSort: true),
          grid.Column(columnName: "Subject", header: null, canSort: true),
-         grid.Column(format: @<form method="post" action="@Url.Action("OpenLetter", "Message")"><input type="hidden" name="id" value="@item.Id" /><input type="submit" value="Open" /></form>),
-         grid.Column(format: @<form method="post" action="@Url.Action("DeleteLetter", "Message")"><input type="hidden" name="id" value="@item.Id" /><input type="submit" value="Delete" /></form>)
+         grid.Column(format: @<form method="post" action="@Url.Action("OpenLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType})"><input type="hidden" name="letterId" value="@item.Id" /><input type="submit" value="Open" /></form>),
+         grid.Column(format: @<form method="post" action="@Url.Action("DeleteLetter", "Message",  routeValues: new { numberOfType = ViewBag.NumberOfType})"><input type="hidden" name="letterId" value="@item.Id" /><input type="submit" value="Delete" /></form>)
     ))
 </section>
 

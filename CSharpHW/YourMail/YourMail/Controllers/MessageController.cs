@@ -16,14 +16,34 @@ namespace YourMail.Controllers
     {
         [HttpPost]
         [Authorize]
-        public ActionResult OpenLetter(int? id)
+        public ActionResult OpenLetter(int? letterId, int? numberOfType)
         {
-            var user = WebSecurity.CurrentUserId;
-            using(var db = new DataBaseContext())
+            var userId = WebSecurity.CurrentUserId;
+            var orderUserId = default(int?);
+            using (var db = new DataBaseContext())
             {
-
+                if (numberOfType == (int)NumberOfTypes.IncomingLetters)
+                {
+                    orderUserId = db.IncomingLetters.FirstOrDefault(x => x.LetterId == letterId).OrderUserId;
+                }
+                else if (numberOfType == (int)NumberOfTypes.SendLetters)
+                {
+                    orderUserId = db.SendLetters.FirstOrDefault(x => x.LetterId == letterId).OrderUserId;
+                }
+                else if (numberOfType == (int)NumberOfTypes.SpamLetters)
+                {
+                    orderUserId = db.SpamLetters.FirstOrDefault(x => x.LetterId == letterId).OrderUserId;
+                }
+                else
+                {
+                    orderUserId = null;
+                }
+                if (userId == orderUserId)
+                {
+                    db.Letters.FirstOrDefault(x => x.Id == letterId);
+                }
             }
-            return RedirectToAction("AddSpamMail", "Message");
+            return RedirectToAction("Index", "Home");
         }
 
         [Authorize]
@@ -107,10 +127,10 @@ namespace YourMail.Controllers
                 {
                     if (numberOfType == (int)NumberOfTypes.IncomingLetters)
                     {
-                        var listIncomingLetters = db.IncomingLetters.Where(x => x.OrderUserId == currentUserId).OrderBy(x => x.Date).ToList();
-                        foreach(var incomingLetter in listIncomingLetters)
+                        var list = db.IncomingLetters.Where(x => x.OrderUserId == currentUserId).OrderBy(x => x.Date).ToList();
+                        foreach (var item in list)
                         {
-                            listLetters.Add(incomingLetter);
+                            listLetters.Add(item);
                         }
                         ViewBag.Title = "Incoming letters";
                     }
@@ -144,6 +164,18 @@ namespace YourMail.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+
+        //public T ReturnTypeOfLetters<T>(int numberOfType) 
+        //{
+        //    //if (numberOfType == (int)NumberOfTypes.IncomingLetters)
+        //    //{
+        //        return new IncomingLetter();
+        //    //}
+        //    //else if (numberOfType == (int)NumberOfTypes.SendLetters)
+        //    //{
+
+        //    //}
+        //}
 
         [HttpPost]
         [Authorize]
