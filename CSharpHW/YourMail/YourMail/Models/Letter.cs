@@ -29,7 +29,11 @@ namespace YourMail.Models
 
         public string ToWhom { get; set; }
 
-        public string NameOfFile { get; set; }
+        public string FileName { get; set; }
+
+        public string FilePuth { get; set; }
+        
+        public string FileType { get; set; }
 
         public string AdresOfFile { get; set; }
 

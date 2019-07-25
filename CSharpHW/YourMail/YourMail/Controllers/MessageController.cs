@@ -14,6 +14,17 @@ namespace YourMail.Controllers
 {
     public class MessageController : Controller
     {
+        [HttpPost]
+        [Authorize]
+        public ActionResult OpenLetter(int? id)
+        {
+            var user = WebSecurity.CurrentUserId;
+            using(var db = new DataBaseContext())
+            {
+
+            }
+            return RedirectToAction("AddSpamMail", "Message");
+        }
 
         [Authorize]
         public ActionResult New_letter()
@@ -24,7 +35,7 @@ namespace YourMail.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult New_letter(Letter letter)
+        public ActionResult New_letter(Letter letter, HttpPostedFileBase upload)
         {
             using (var db = new DataBaseContext())
             {
@@ -54,7 +65,7 @@ namespace YourMail.Controllers
                     }
                 }
 
-                db.Letters.Add(CreateNewLetter(letter, user, GetAllRecipients(letter)));
+                db.Letters.Add(CreateNewLetter(letter, user, GetAllRecipients(letter), upload));
 
                 db.SaveChanges();
             }
@@ -142,10 +153,26 @@ namespace YourMail.Controllers
             return View();
         }
 
-        public Letter CreateNewLetter(Letter letter, UserProfile user, List<string> allRecipients)
+        public Letter CreateNewLetter(Letter letter, UserProfile user, List<string> allRecipients, HttpPostedFileBase upload)
         {
-            letter.FromWhom = user.UserMail;
-            letter.NumberOfOwners = allRecipients.Count + 1; //"+1" This is the user who sent the letter
+            if (upload != null)
+            {
+                var filePuth = "~/Files/" + Guid.NewGuid().ToString();
+                try
+                {
+                    upload.SaveAs(Server.MapPath(filePuth));
+                }
+                catch (Exception err)
+                {
+                    return new Letter();
+                }
+                letter.FromWhom = user.UserMail;
+                letter.NumberOfOwners = allRecipients.Count + 1; //"+1" This is the user who sent the letter
+                letter.FilePuth = filePuth;
+                letter.FileType = upload.ContentType;
+                letter.FileName = upload.FileName;
+
+            }
             return letter;
         }
 

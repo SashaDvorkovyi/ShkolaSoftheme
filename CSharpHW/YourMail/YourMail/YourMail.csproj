@@ -237,7 +237,7 @@
     <Content Include="Views\Message\ShowTypesLetters.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="files\" />
+    <Folder Include="Files\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

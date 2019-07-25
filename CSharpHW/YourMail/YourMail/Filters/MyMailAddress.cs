@@ -32,7 +32,7 @@ namespace YourMail.Filters
             }
             else if (!(new Regex(@"(\w+)@your.com$").Matches(userEmail).Count > 0))
             {
-                ErrorMessage = "Email should end on @uour.com and contain only letters or numbers";
+                ErrorMessage = "Email should end on \"@your.com\" and contain only letters or numbers";
                 return false;
             }
 

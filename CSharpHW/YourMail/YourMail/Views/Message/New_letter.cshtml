@@ -9,34 +9,35 @@
 </hgroup>
 
 <section>
-    @using (Html.BeginForm())
+    @using (Html.BeginForm("New_letter", "Message", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
-        @Html.AntiForgeryToken()
         @Html.ValidationSummary(true)
 
-        <fieldset>
-            <legend>New Letter</legend>
-            <ol>
-                <li>
-                    @Html.LabelFor(x => x.FromWhom)
-                    @Html.Label("From Whom", ": "+User.Identity.Name)
-                </li>
-                <li>
-                    @Html.LabelFor(x => x.ToWhom, "To whom")<br />
-                    @Html.TextBoxFor(x => x.ToWhom)
-                </li>
-                <li>
-                    @Html.LabelFor(x => x.Subject)<br />
-                    @Html.TextBoxFor(x => x.Subject)
-                    @Html.ValidationMessageFor(x => x.Subject)
-                </li>
-                <li>
-                    @Html.LabelFor(x => x.Content)<br />
-                    @Html.TextAreaFor(x => x.Content)
-                </li>
-            </ol>
-            <input type="submit" value="Send" />
-        </fieldset>
+    <fieldset>
+        <legend>New Letter</legend>
+        <ol>
+            <li>
+                @Html.LabelFor(x => x.FromWhom)
+                @Html.Label("From Whom", ": " + User.Identity.Name)
+            </li>
+            <li>
+                @Html.LabelFor(x => x.ToWhom, "To whom")<br />
+                @Html.TextBoxFor(x => x.ToWhom)
+            </li>
+            <li>
+                @Html.LabelFor(x => x.Subject)<br />
+                @Html.TextBoxFor(x => x.Subject)
+                @Html.ValidationMessageFor(x => x.Subject)
+            </li>
+            <li>
+                @Html.LabelFor(x => x.Content)<br />
+                @Html.TextAreaFor(x => x.Content)
+            </li>
+        </ol>
+        <input type="file" name="upload" /><br />
+
+        <input type="submit" value="Send" />
+    </fieldset>
     }
 </section>
 
