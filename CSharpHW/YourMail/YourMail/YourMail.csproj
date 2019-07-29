@@ -235,6 +235,7 @@
     <Content Include="Views\Message\New_letter.cshtml" />
     <Content Include="Views\Message\AddSpamMail.cshtml" />
     <Content Include="Views\Message\ShowTypesLetters.cshtml" />
+    <Content Include="Views\Message\OpenLetter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Files\" />

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YourMail.Models
 {
@@ -9,7 +8,6 @@ namespace YourMail.Models
     {
         public Letter()
         {
-            Date = DateTime.Now;
             IncomingLetters = new List<IncomingLetter>();
             SendLetters = new List<SendLetter>();
             SpamLetters = new List<SpamLetter>();
@@ -23,7 +21,7 @@ namespace YourMail.Models
         [StringLength(50, ErrorMessage = "The long must be at least {0} characters.")]
         public string Subject { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
         public string FromWhom { get; set; }
 

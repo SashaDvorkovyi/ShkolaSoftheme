@@ -14,38 +14,76 @@ namespace YourMail.Controllers
 {
     public class MessageController : Controller
     {
+        public FilePathResult DownloadFile(int? letterId)
+        {
+            var userId = WebSecurity.CurrentUserId;
+            using (var db = new DataBaseContext())
+            {
+                var letter = db.Letters.FirstOrDefault(x => x.Id == letterId);
+                if (letter != null)
+                {
+                    if ((letter.SendLetters.Any(x => x.OrderUserId == userId)) || (letter.IncomingLetters.Any(x => x.OrderUserId == userId)) || (letter.SendLetters.Any(x => x.OrderUserId == userId)))
+                    {
+                        if (letter.FilePuth != null)
+                        {
+                            return File(letter.FilePuth, letter.FileType, letter.FileName);
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         [HttpPost]
         [Authorize]
         public ActionResult OpenLetter(int? letterId, int? numberOfType)
         {
             var userId = WebSecurity.CurrentUserId;
-            var orderUserId = default(int?);
             using (var db = new DataBaseContext())
             {
-                if (numberOfType == (int)NumberOfTypes.IncomingLetters)
+                var letter = db.Letters.FirstOrDefault(x => x.Id == letterId);
+                if (letter != null)
                 {
-                    orderUserId = db.IncomingLetters.FirstOrDefault(x => x.LetterId == letterId).OrderUserId;
+                    if (numberOfType == (int)NumberOfTypes.IncomingLetters)
+                    {
+                       var incomingLetters = letter.IncomingLetters.FirstOrDefault(x => x.OrderUserId == userId);
+                        incomingLetters.IsRead = true;
+                        db.Entry(incomingLetters).State = EntityState.Modified;
+                    }
+                    else if (numberOfType == (int)NumberOfTypes.SendLetters)
+                    {
+                        correctUser = letter.SendLetters.Any(x => x.OrderUserId == userId);
+                    }
+                    else if (numberOfType == (int)NumberOfTypes.SpamLetters)
+                    {
+                        correctUser = letter.SpamLetters.Any(x => x.OrderUserId == userId);
+                    }
                 }
-                else if (numberOfType == (int)NumberOfTypes.SendLetters)
+                if (correctUser)
                 {
-                    orderUserId = db.SendLetters.FirstOrDefault(x => x.LetterId == letterId).OrderUserId;
-                }
-                else if (numberOfType == (int)NumberOfTypes.SpamLetters)
-                {
-                    orderUserId = db.SpamLetters.FirstOrDefault(x => x.LetterId == letterId).OrderUserId;
-                }
-                else
-                {
-                    orderUserId = null;
-                }
-                if (userId == orderUserId)
-                {
-                    db.Letters.FirstOrDefault(x => x.Id == letterId);
+
+                    return View(letter);
                 }
             }
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpPost]
+        [Authorize]
+        public ActionResult DeleteLetter(int? letterId, int? numberOfType)
+        {
+            var inc = new IncomingLetter();
+            var userId = WebSecurity.CurrentUserId;
+            using(var db = new DataBaseContext())
+            {
+                if (numberOfType == (int)NumberOfTypes.IncomingLetters)
+                {
+                    var incLetter=db.IncomingLetters.FirstOrDefault(x => x.LetterId == letterId || x.OrderUserId == userId);
+                    //if()
+                }
+            }
+            return null;
+        }
         [Authorize]
         public ActionResult New_letter()
         {
@@ -198,6 +236,7 @@ namespace YourMail.Controllers
                 {
                     return new Letter();
                 }
+                letter.Date = DateTime.Now;
                 letter.FromWhom = user.UserMail;
                 letter.NumberOfOwners = allRecipients.Count + 1; //"+1" This is the user who sent the letter
                 letter.FilePuth = filePuth;

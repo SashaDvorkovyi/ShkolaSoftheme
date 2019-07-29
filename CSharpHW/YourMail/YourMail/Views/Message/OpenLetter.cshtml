@@ -1,0 +1,32 @@
+﻿@model YourMail.Models.Letter
+
+@{  var letter = Model; }
+<h2>Open Letter</h2>
+
+<section>
+    <ol>
+        <li>
+
+            @Html.Label("From whom:")<br />
+            @Html.Label(letter.FromWhom)<br />
+        </li>
+        <li>
+            @Html.Label("To whom:")<br />
+            @Html.Label(letter.ToWhom)<br />
+
+        </li>
+        <li>
+            @Html.Label("Subject:")<br />
+            @Html.Label(letter.Subject)<br />
+        </li>
+        <li>
+            @Html.Label("Content:")<br />
+            @Html.Label(letter.Content)<br /><br />
+        </li>
+    </ol>
+    @Html.Label("Download File:")<br />
+    @if (letter.FileName != null)
+    {
+        @Html.ActionLink(letter.FileName, "DownloadFile", "Message", routeValues: new { letterId = letter.Id }, htmlAttributes: new { @class = "file" })
+    }
+</section>
