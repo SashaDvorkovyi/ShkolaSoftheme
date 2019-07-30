@@ -55,7 +55,7 @@
             });
             $.ajax({
                 type: "POST",
-                url: "@Url.Action("ShowTypesLetters", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType })",
+                url: "@Url.Action("DeleteAllSelected", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType })",
                 data: JSON.stringify(arrayIdOfLetters),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json"

@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "New letter";
+    var letter = Model;
 }
 
 <hgroup class="title">
@@ -13,31 +14,31 @@
     {
         @Html.ValidationSummary(true)
 
-    <fieldset>
-        <legend>New Letter</legend>
-        <ol>
-            <li>
-                @Html.LabelFor(x => x.FromWhom)
-                @Html.Label("From Whom", ": " + User.Identity.Name)
-            </li>
-            <li>
-                @Html.LabelFor(x => x.ToWhom, "To whom")<br />
-                @Html.TextBoxFor(x => x.ToWhom)
-            </li>
-            <li>
-                @Html.LabelFor(x => x.Subject)<br />
-                @Html.TextBoxFor(x => x.Subject)
-                @Html.ValidationMessageFor(x => x.Subject)
-            </li>
-            <li>
-                @Html.LabelFor(x => x.Content)<br />
-                @Html.TextAreaFor(x => x.Content)
-            </li>
-        </ol>
-        <input type="file" name="upload" /><br />
+        <fieldset>
+            <legend>New Letter</legend>
+            <ol>
+                <li>
+                    @Html.LabelFor(x => x.FromWhom)
+                    @Html.Label("From Whom", ": " + User.Identity.Name)
+                </li>
+                <li>
+                    @Html.LabelFor(x => x.ToWhom, "To whom")<br />
+                    @Html.TextBoxFor(x => x.ToWhom, letter.ToWhom)
+                </li>
+                <li>
+                    @Html.LabelFor(x => x.Subject)<br />
+                    @Html.TextBoxFor(x => x.Subject)
+                    @Html.ValidationMessageFor(x => x.Subject, letter.Subject)
+                </li>
+                <li>
+                    @Html.LabelFor(x => x.Content)<br />
+                    @Html.TextAreaFor(x => x.Content, letter.Content)
+                </li>
+            </ol>
+            <input type="file" name="upload" value=@letter.FileName/><br />
 
-        <input type="submit" value="Send" />
-    </fieldset>
+            <input type="submit" value="Send" />
+        </fieldset>
     }
 </section>
 

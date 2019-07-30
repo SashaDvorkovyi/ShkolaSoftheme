@@ -29,4 +29,8 @@
     {
         @Html.ActionLink(letter.FileName, "DownloadFile", "Message", routeValues: new { letterId = letter.Id }, htmlAttributes: new { @class = "file" })
     }
+    @Html.BeginForm("Forwardletter", "Message", routeValues: new { letterId = letter.Id })
+    {
+    <input type="submit" value="Forward a letter" />
+    }
 </section>

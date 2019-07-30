@@ -39,6 +39,7 @@ namespace YourMail.Controllers
         public ActionResult OpenLetter(int? letterId, int? numberOfType)
         {
             var userId = WebSecurity.CurrentUserId;
+            var correctUser = false;
             using (var db = new DataBaseContext())
             {
                 var letter = db.Letters.FirstOrDefault(x => x.Id == letterId);
@@ -47,17 +48,34 @@ namespace YourMail.Controllers
                     if (numberOfType == (int)NumberOfTypes.IncomingLetters)
                     {
                        var incomingLetters = letter.IncomingLetters.FirstOrDefault(x => x.OrderUserId == userId);
-                        incomingLetters.IsRead = true;
-                        db.Entry(incomingLetters).State = EntityState.Modified;
+                        if (incomingLetters.Id!=0)
+                        {
+                            incomingLetters.IsRead = true;
+                            db.Entry(incomingLetters).State = EntityState.Modified;
+                            correctUser = true;
+                        }
                     }
                     else if (numberOfType == (int)NumberOfTypes.SendLetters)
                     {
-                        correctUser = letter.SendLetters.Any(x => x.OrderUserId == userId);
+                        var sendLetters = letter.SendLetters.FirstOrDefault(x => x.OrderUserId == userId);
+                        if (sendLetters.Id!=0)
+                        {
+                            sendLetters.IsRead = true;
+                            db.Entry(sendLetters).State = EntityState.Modified;
+                            correctUser = true;
+                        }
                     }
                     else if (numberOfType == (int)NumberOfTypes.SpamLetters)
                     {
-                        correctUser = letter.SpamLetters.Any(x => x.OrderUserId == userId);
+                        var spamLetters = letter.SpamLetters.FirstOrDefault(x => x.OrderUserId == userId);
+                        if (spamLetters!=null)
+                        {
+                            spamLetters.IsRead = true;
+                            db.Entry(spamLetters).State = EntityState.Modified;
+                            correctUser = true;
+                        }
                     }
+                    db.SaveChanges();
                 }
                 if (correctUser)
                 {
@@ -70,25 +88,162 @@ namespace YourMail.Controllers
 
         [HttpPost]
         [Authorize]
+        public ActionResult DeleteAllSelected(int[] arrayIdOfLetters, int? numberOfType)
+        {
+            if (arrayIdOfLetters != null)
+            {
+                var userId = WebSecurity.CurrentUserId;
+                using (var db = new DataBaseContext())
+                {
+                    if (numberOfType == (int)NumberOfTypes.IncomingLetters)
+                    {
+                        var listIncomingLetters = (db.IncomingLetters.Join(arrayIdOfLetters, x => x.Id, y => y, (x, y) => x).Where(x => x.OrderUserId == userId)).Include(x=>x.Letter);
+                        if (listIncomingLetters != null)
+                        {
+                            foreach (var incomingLetter in listIncomingLetters)
+                            {
+                                incomingLetter.Letter.NumberOfOwners--;
+                                if (incomingLetter.Letter.NumberOfOwners == 0)
+                                {
+                                    db.Entry(incomingLetter.Letter).State = EntityState.Deleted;
+                                }
+                                else
+                                {
+                                    db.Entry(incomingLetter.Letter).State = EntityState.Modified;
+                                }
+                                db.Entry(incomingLetter).State = EntityState.Deleted;
+                            }
+                        }
+                    }
+                    else if (numberOfType == (int)NumberOfTypes.SendLetters)
+                    {
+                        var listSendLetters = (db.SendLetters.Join(arrayIdOfLetters, x => x.Id, y => y, (x, y) => x).Where(x => x.OrderUserId == userId));
+                        if (listSendLetters != null)
+                        {
+                            foreach (var sendLetter in listSendLetters)
+                            {
+                                sendLetter.Letter.NumberOfOwners--;
+                                if (sendLetter.Letter.NumberOfOwners == 0)
+                                {
+                                    db.Entry(sendLetter.Letter).State = EntityState.Deleted;
+                                }
+                                else
+                                {
+                                    db.Entry(sendLetter.Letter).State = EntityState.Modified;
+                                }
+                                db.Entry(sendLetter).State = EntityState.Deleted;
+                                db.Entry(sendLetter).State = EntityState.Deleted;
+                            }
+                        }
+                    }
+                    else if (numberOfType == (int)NumberOfTypes.SpamLetters)
+                    {
+                        var listSpamLetters = (db.SpamLetters.Join(arrayIdOfLetters, x => x.Id, y => y, (x, y) => x).Where(x => x.OrderUserId == userId));
+                        if (listSpamLetters != null)
+                        {
+                            foreach (var spamLetter in listSpamLetters)
+                            {
+                                spamLetter.Letter.NumberOfOwners--;
+                                if (spamLetter.Letter.NumberOfOwners == 0)
+                                {
+                                    db.Entry(spamLetter.Letter).State = EntityState.Deleted;
+                                }
+                                else
+                                {
+                                    db.Entry(spamLetter.Letter).State = EntityState.Modified;
+                                }
+                                db.Entry(spamLetter).State = EntityState.Deleted;
+                            }
+                        }
+                    }
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("ShowTypesLetters", "Message", new { numberOfType });
+        }
+
+        [HttpPost]
+        [Authorize]
         public ActionResult DeleteLetter(int? letterId, int? numberOfType)
         {
-            var inc = new IncomingLetter();
             var userId = WebSecurity.CurrentUserId;
             using(var db = new DataBaseContext())
             {
                 if (numberOfType == (int)NumberOfTypes.IncomingLetters)
                 {
                     var incLetter=db.IncomingLetters.FirstOrDefault(x => x.LetterId == letterId || x.OrderUserId == userId);
-                    //if()
+                    if (incLetter != null)
+                    {
+                        var carrentLetter = db.Letters.First(x => x.Id == letterId);
+                        carrentLetter.NumberOfOwners = carrentLetter.NumberOfOwners-1;
+                        if (carrentLetter.NumberOfOwners == 0)
+                        {
+                            db.Entry(carrentLetter).State = EntityState.Deleted;
+                        }
+                        else
+                        {
+                            db.Entry(carrentLetter).State = EntityState.Modified;
+                        }
+                        db.Entry(incLetter).State = EntityState.Deleted;
+                    }
                 }
+                if (numberOfType == (int)NumberOfTypes.SendLetters)
+                {
+                    var sendLetter = db.SendLetters.FirstOrDefault(x => x.LetterId == letterId || x.OrderUserId == userId);
+                    if (sendLetter != null)
+                    {
+                        var carrentLetter = db.Letters.First(x => x.Id == letterId);
+                        carrentLetter.NumberOfOwners = carrentLetter.NumberOfOwners - 1;
+                        if (carrentLetter.NumberOfOwners == 0)
+                        {
+                            db.Entry(carrentLetter).State = EntityState.Deleted;
+                        }
+                        else
+                        {
+                            db.Entry(carrentLetter).State = EntityState.Modified;
+                        }
+                        db.Entry(sendLetter).State = EntityState.Deleted;
+                    }
+                }
+                if (numberOfType == (int)NumberOfTypes.SpamLetters)
+                {
+                    var spamLetter = db.SendLetters.FirstOrDefault(x => x.LetterId == letterId || x.OrderUserId == userId);
+                    if (spamLetter != null)
+                    {
+                        var carrentLetter = db.Letters.First(x => x.Id == letterId);
+                        carrentLetter.NumberOfOwners = carrentLetter.NumberOfOwners - 1;
+                        if (carrentLetter.NumberOfOwners == 0)
+                        {
+                            db.Entry(carrentLetter).State = EntityState.Deleted;
+                        }
+                        else
+                        {
+                            db.Entry(carrentLetter).State = EntityState.Modified;
+                        }
+                        db.Entry(spamLetter).State = EntityState.Deleted;
+                    }
+                }
+                db.SaveChanges();
             }
-            return null;
+            return RedirectToAction("ShowTypesLetters", "Message", new { numberOfType });
         }
+
         [Authorize]
         public ActionResult New_letter()
         {
             ViewBag.user = User.Identity.Name;
-            return View();
+            return View(new Letter());
+        }
+
+        [Authorize]
+        public ActionResult Forwardletter(int? letterId)
+        {
+            using(var db= new DataBaseContext())
+            {
+
+            }
+            ViewBag.user = User.Identity.Name;
+            return View(new Letter());
         }
 
         [HttpPost]
@@ -203,16 +358,28 @@ namespace YourMail.Controllers
             }
         }
 
-        //public T ReturnTypeOfLetters<T>(int numberOfType) 
+        //public Type ReturnTypeOfLetters(int? numberOfType) 
         //{
-        //    //if (numberOfType == (int)NumberOfTypes.IncomingLetters)
-        //    //{
-        //        return new IncomingLetter();
-        //    //}
-        //    //else if (numberOfType == (int)NumberOfTypes.SendLetters)
-        //    //{
-
-        //    //}
+        //    if(numberOfType == null)
+        //    {
+        //        return null;
+        //    }
+        //    else if (numberOfType == (int)NumberOfTypes.IncomingLetters)
+        //    {
+        //        return typeof(IncomingLetter);
+        //    }
+        //    else if (numberOfType == (int)NumberOfTypes.SendLetters)
+        //    {
+        //        return typeof(SendLetter);
+        //    }
+        //    else if (numberOfType == (int)NumberOfTypes.SpamLetters)
+        //    {
+        //        return typeof(SendLetter);
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
         //}
 
         [HttpPost]
@@ -238,7 +405,7 @@ namespace YourMail.Controllers
                 }
                 letter.Date = DateTime.Now;
                 letter.FromWhom = user.UserMail;
-                letter.NumberOfOwners = allRecipients.Count + 1; //"+1" This is the user who sent the letter
+                letter.NumberOfOwners = allRecipients.Count + 1; //"+1" This is the user who sent the lette
                 letter.FilePuth = filePuth;
                 letter.FileType = upload.ContentType;
                 letter.FileName = upload.FileName;
