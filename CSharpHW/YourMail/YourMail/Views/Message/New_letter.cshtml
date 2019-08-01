@@ -10,8 +10,9 @@
 </hgroup>
 
 <section>
-    @using (Html.BeginForm("New_letter", "Message", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    @using (Html.BeginForm("New_letter", "Message", FormMethod.Post, htmlAttributes: new { enctype = "multipart/form-data" }))
     {
+        @Html.AntiForgeryToken()
         @Html.ValidationSummary(true)
 
         <fieldset>
@@ -24,19 +25,31 @@
                 <li>
                     @Html.LabelFor(x => x.ToWhom, "To whom")<br />
                     @Html.TextBoxFor(x => x.ToWhom, letter.ToWhom)
+                    @Html.ValidationMessageFor(x => x.ToWhom)
                 </li>
                 <li>
                     @Html.LabelFor(x => x.Subject)<br />
                     @Html.TextBoxFor(x => x.Subject)
-                    @Html.ValidationMessageFor(x => x.Subject, letter.Subject)
+                    @Html.ValidationMessageFor(x => x.Subject)
                 </li>
                 <li>
                     @Html.LabelFor(x => x.Content)<br />
                     @Html.TextAreaFor(x => x.Content, letter.Content)
                 </li>
             </ol>
-            <input type="file" name="upload" value=@letter.FileName/><br />
-
+            @if (letter.FileName != null)
+            {
+                @Html.ActionLink(letter.FileName, "DownloadFile", "Message", routeValues: new { letterId = letter.Id }, htmlAttributes: new { @id = "fileEXist" });
+                @Html.TextBoxFor(x => x.FileName, htmlAttributes: new { @id = "fileName", hidden = "hidden" });
+                @Html.TextBoxFor(x => x.FilePuth, htmlAttributes: new { @id = "filePuth", hidden = "hidden" });
+                @Html.TextBoxFor(x => x.FileType, htmlAttributes: new { @id = "fileType", hidden = "hidden" });
+                <input type="button" value="Change file" id="button"/>
+                <input type="file" name="upload"  hidden="hidden" id="file"/><br />
+            }
+            else
+            {
+                <input type="file" name="upload"  /><br />
+            }
             <input type="submit" value="Send" />
         </fieldset>
     }
@@ -45,3 +58,21 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="jquery-1.8.1.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    $(document).ready(function ()
+    {
+        $("#button").on("click", function ()
+        {
+            $("#fileEXist").remove();
+            $("#button").remove();
+            $("fileName").remove();
+            $("filePuth").remove();
+            $("fileType").remove();
+            $("#file").removeAttr("hidden");
+        });
+    });
+</script>

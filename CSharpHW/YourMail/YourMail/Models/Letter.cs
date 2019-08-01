@@ -25,6 +25,7 @@ namespace YourMail.Models
 
         public string FromWhom { get; set; }
 
+        [Required]
         public string ToWhom { get; set; }
 
         public string FileName { get; set; }

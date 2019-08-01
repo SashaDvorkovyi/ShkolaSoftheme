@@ -236,19 +236,48 @@ namespace YourMail.Controllers
         }
 
         [Authorize]
+        public ActionResult Answerletter(Letter letter)
+        {
+            var newLetter = new Letter();
+            newLetter.FromWhom = letter.FromWhom;
+            return View("New_letter", newLetter);
+        }
+        [Authorize]
         public ActionResult Forwardletter(int? letterId)
         {
-            using(var db= new DataBaseContext())
+            var letter = new Letter();
+            var userName = User.Identity.Name;
+            ViewBag.user = userName;
+            using (var db= new DataBaseContext())
             {
-
+                letter = db.Letters.FirstOrDefault(x => x.Id == letterId);
+                if (letter.Id != 0)
+                {
+                    if (userName.Equals(letter.FromWhom))
+                    {
+                        return View("New_letter", letter);
+                    }
+                    else
+                    {
+                        var listRecipients = GetAllRecipients(letter);
+                        foreach (var resipient in listRecipients)
+                        {
+                            if (userName.Equals(resipient))
+                            {
+                                return View("New_letter", letter);
+                            }
+                        }
+                    }
+                }
+                
             }
-            ViewBag.user = User.Identity.Name;
-            return View(new Letter());
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
         [Authorize]
-        public ActionResult New_letter(Letter letter, HttpPostedFileBase upload)
+        [ValidateAntiForgeryToken]
+        public ActionResult New_letter(Letter letter, HttpPostedFileBase upload, int? letterId)
         {
             using (var db = new DataBaseContext())
             {
@@ -358,30 +387,6 @@ namespace YourMail.Controllers
             }
         }
 
-        //public Type ReturnTypeOfLetters(int? numberOfType) 
-        //{
-        //    if(numberOfType == null)
-        //    {
-        //        return null;
-        //    }
-        //    else if (numberOfType == (int)NumberOfTypes.IncomingLetters)
-        //    {
-        //        return typeof(IncomingLetter);
-        //    }
-        //    else if (numberOfType == (int)NumberOfTypes.SendLetters)
-        //    {
-        //        return typeof(SendLetter);
-        //    }
-        //    else if (numberOfType == (int)NumberOfTypes.SpamLetters)
-        //    {
-        //        return typeof(SendLetter);
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
-
         [HttpPost]
         [Authorize]
         public ActionResult ShowTypesLetters(int[] a, int? numberOfType)
@@ -403,14 +408,15 @@ namespace YourMail.Controllers
                 {
                     return new Letter();
                 }
-                letter.Date = DateTime.Now;
-                letter.FromWhom = user.UserMail;
-                letter.NumberOfOwners = allRecipients.Count + 1; //"+1" This is the user who sent the lette
+
                 letter.FilePuth = filePuth;
                 letter.FileType = upload.ContentType;
                 letter.FileName = upload.FileName;
-
             }
+            letter.Date = DateTime.Now;
+            letter.FromWhom = user.UserMail;
+            letter.NumberOfOwners = allRecipients.Count + 1; //"+1" This is the user who sent the lette
+
             return letter;
         }
 
