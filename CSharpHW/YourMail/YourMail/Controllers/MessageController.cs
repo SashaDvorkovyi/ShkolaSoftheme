@@ -117,7 +117,7 @@ namespace YourMail.Controllers
                     }
                     else if (numberOfType == (int)NumberOfTypes.SendLetters)
                     {
-                        var listSendLetters = (db.SendLetters.Join(arrayIdOfLetters, x => x.Id, y => y, (x, y) => x).Where(x => x.OrderUserId == userId));
+                        var listSendLetters = (db.SendLetters.Join(arrayIdOfLetters, x => x.Id, y => y, (x, y) => x).Where(x => x.OrderUserId == userId)).Include(x=>x.Letter);
                         if (listSendLetters != null)
                         {
                             foreach (var sendLetter in listSendLetters)
@@ -132,13 +132,12 @@ namespace YourMail.Controllers
                                     db.Entry(sendLetter.Letter).State = EntityState.Modified;
                                 }
                                 db.Entry(sendLetter).State = EntityState.Deleted;
-                                db.Entry(sendLetter).State = EntityState.Deleted;
                             }
                         }
                     }
                     else if (numberOfType == (int)NumberOfTypes.SpamLetters)
                     {
-                        var listSpamLetters = (db.SpamLetters.Join(arrayIdOfLetters, x => x.Id, y => y, (x, y) => x).Where(x => x.OrderUserId == userId));
+                        var listSpamLetters = (db.SpamLetters.Join(arrayIdOfLetters, x => x.Id, y => y, (x, y) => x).Where(x => x.OrderUserId == userId)).Include(x => x.Letter);
                         if (listSpamLetters != null)
                         {
                             foreach (var spamLetter in listSpamLetters)
@@ -236,14 +235,14 @@ namespace YourMail.Controllers
         }
 
         [Authorize]
-        public ActionResult Answerletter(Letter letter)
+        public ActionResult AnswerLetter(string fromWhom)
         {
             var newLetter = new Letter();
-            newLetter.FromWhom = letter.FromWhom;
+            newLetter.ToWhom = fromWhom;
             return View("New_letter", newLetter);
         }
         [Authorize]
-        public ActionResult Forwardletter(int? letterId)
+        public ActionResult ForwardLetter(int? letterId)
         {
             var letter = new Letter();
             var userName = User.Identity.Name;
@@ -281,6 +280,7 @@ namespace YourMail.Controllers
         {
             using (var db = new DataBaseContext())
             {
+                letter.Date = DateTime.Now;
                 var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == User.Identity.Name);
 
                 db.Entry(CreateTypeOfLetter<SendLetter>(letter, user, letter.ToWhom)).State = EntityState.Added;
@@ -413,7 +413,6 @@ namespace YourMail.Controllers
                 letter.FileType = upload.ContentType;
                 letter.FileName = upload.FileName;
             }
-            letter.Date = DateTime.Now;
             letter.FromWhom = user.UserMail;
             letter.NumberOfOwners = allRecipients.Count + 1; //"+1" This is the user who sent the lette
 

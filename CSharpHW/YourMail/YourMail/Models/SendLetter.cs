@@ -19,9 +19,9 @@ namespace YourMail.Models
 
         public int? OrderUserId { get; set; }
 
-        public virtual UserProfile OrderUser { get; set; }
-
         public int? LetterId { get; set; }
+
+        public virtual UserProfile OrderUser { get; set; }
 
         public virtual Letter Letter { get; set; }
     }

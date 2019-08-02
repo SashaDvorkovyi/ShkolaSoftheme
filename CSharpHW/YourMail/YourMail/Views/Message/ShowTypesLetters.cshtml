@@ -1,46 +1,47 @@
 ﻿@model IEnumerable<YourMail.Interfaces.ITypesOfLetter>
-@{
-    var grid = new WebGrid(source: Model, rowsPerPage: 5);
-}
+<div id="ajaxgrid">
+    @{
+        var grid = new WebGrid(source: Model, rowsPerPage: 5, selectionFieldName: "SelectedRow", ajaxUpdateContainerId: "ajaxgrid");
+    }
+</div>
+    <hgroup class="title">
+        <h2>@ViewBag.Title.</h2>
+    </hgroup>
 
-<hgroup class="title">
-    <h2>@ViewBag.Title.</h2>
-</hgroup>
+    <section>
+        <input type="checkbox" id="CheckUncheckAllCheckbox" />
+        <input type="submit" id="SendIdLettersForDelete" value="Delete all selected" />
+        @grid.GetHtml(columns: grid.Columns(
+                 grid.Column(format: @<input type="checkbox" name="@item.Id" class="CheckForDelete" />),
+                        grid.Column(format: @<input type="hidden" name="@item.IsRead.ToString()" class="IsRead" />),
+                                grid.Column(columnName: "Date", header: "Date", canSort: true),
+                                grid.Column(columnName: "ToOrFromWhomMail", canSort: true),
+                                grid.Column(columnName: "Subject", header: null, canSort: true),
+                                grid.Column(format: @<form method="post" action="@Url.Action("OpenLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType})"><input type="hidden" name="letterId" value="@item.Id" /><input type="submit" value="Open" /></form>),
+                                        grid.Column(format: @<form method="post" action="@Url.Action("DeleteLetter", "Message",  routeValues: new { numberOfType = ViewBag.NumberOfType})"><input type="hidden" name="letterId" value="@item.Id" /><input type="submit" value="Delete" /></form>)
+                                           ))
+    </section>
 
-<section>
-    <input type="checkbox" id="CheckUncheckAllCheckbox" />
-    <input type="submit" id="SendIdLettersForDelete" value="Delete all selected" />
-    @grid.GetHtml(columns: grid.Columns(
-         grid.Column(format: @<input type="checkbox" name="@item.Id" class="CheckForDelete" />),
-         grid.Column(format: @<input type="hidden" name="@item.IsRead.ToString()" class="IsRead" />),
-         grid.Column(columnName: "Date", header: "Date", canSort: true),
-         grid.Column(columnName: "ToOrFromWhomMail", canSort: true),
-         grid.Column(columnName: "Subject", header: null, canSort: true),
-         grid.Column(format: @<form method="post" action="@Url.Action("OpenLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType})"><input type="hidden" name="letterId" value="@item.Id" /><input type="submit" value="Open" /></form>),
-         grid.Column(format: @<form method="post" action="@Url.Action("DeleteLetter", "Message",  routeValues: new { numberOfType = ViewBag.NumberOfType})"><input type="hidden" name="letterId" value="@item.Id" /><input type="submit" value="Delete" /></form>)
-    ))
-</section>
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="jquery-1.8.1.js" type="text/javascript"></script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="jquery-1.8.1.js" type="text/javascript"></script>
-
-<script type="text/javascript">
+    <script type="text/javascript">
     $(document).ready(function ()
     {
 
         stileForDontRead();
         function stileForDontRead() {
-            $(".IsRead").each(function () {  
+            $(".IsRead").each(function () {
                 if ($(this).attr("name") === "False") {
                     $(this).closest("tr").css({ "border-color": "#008a77", "border-style": "solid" });
                 }
             });
         }
-        
+
 
         var arrayIdOfLetters = new Array();
         $("#SendIdLettersForDelete").on("click", function ()
@@ -58,7 +59,17 @@
                 url: "@Url.Action("DeleteAllSelected", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType })",
                 data: JSON.stringify(arrayIdOfLetters),
                 contentType: "application/json; charset=utf-8",
-                dataType: "json"
+                dataType: "json",
+                success: function (result) {
+                    if (result == "OK") {
+                        location.reload();
+                    }
+                    else
+                        alert(result);
+                },
+                error: function (result) {
+                    alert('Error!');
+                }
             });
         });
 
@@ -68,4 +79,4 @@
             $(".CheckForDelete").prop("checked", checkUnchek);
         });
     });
-</script>
+    </script>

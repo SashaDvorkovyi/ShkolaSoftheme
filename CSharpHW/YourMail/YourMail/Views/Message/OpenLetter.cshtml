@@ -1,6 +1,6 @@
 ﻿@model YourMail.Models.Letter
 
-@{  var letter = Model; }
+@{ var letter = Model; }
 <h2>Open Letter</h2>
 
 <section>
@@ -12,7 +12,7 @@
         </li>
         <li>
             @Html.Label("To whom:")<br />
-            @Html.Label(letter.ToWhom)<br />
+            @Html.Label(letter.ToWhom, htmlAttributes: new { name = "ToWhom" })<br />
 
         </li>
         <li>
@@ -27,14 +27,18 @@
     @Html.Label("Download File:")<br />
     @if (letter.FileName != null)
     {
-        @Html.ActionLink(letter.FileName, "DownloadFile", "Message", routeValues: new { letterId = letter.Id }, htmlAttributes: new { @class = "file" })
+    @Html.ActionLink(letter.FileName, "DownloadFile", "Message", routeValues: new { letterId = letter.Id }, htmlAttributes: new { @class = "file" })<br />
     }
-    @Html.BeginForm("Forwardletter", "Message", routeValues: new { letterId = letter.Id })
+
+    @using (Html.BeginForm("AnswerLetter", "Message"))
     {
-    <input type="submit" value="Forward a letter" />
+        <input type="hidden" name="fromWhom" value=@letter.FromWhom />
+        <input type="submit" value="Answer letter" />
     }
-    @Html.BeginForm("Answerletter", "Message")
+    @using (Html.BeginForm("ForwardLetter", "Message", routeValues: new { letterId = letter.Id }))
     {
-    <input type="submit" value="Answer letter" />
+        <input type="submit" value="Forward a letter" />
     }
+
+
 </section>
