@@ -88,7 +88,7 @@ namespace YourMail.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult DeleteAllSelected(int[] arrayIdOfLetters, int? numberOfType)
+        public PartialViewResult DeleteAllSelected(int[] arrayIdOfLetters, int? numberOfType)
         {
             if (arrayIdOfLetters != null)
             {
@@ -158,7 +158,45 @@ namespace YourMail.Controllers
                     db.SaveChanges();
                 }
             }
-            return RedirectToAction("ShowTypesLetters", "Message", new { numberOfType });
+
+
+            var currentUserId = WebSecurity.CurrentUserId;
+            var listLetters = new List<ITypesOfLetter>();
+            if (numberOfType != null)
+            {
+                using (var db = new DataBaseContext())
+                {
+                    if (numberOfType == (int)NumberOfTypes.IncomingLetters)
+                    {
+                        var list = db.IncomingLetters.Where(x => x.OrderUserId == currentUserId).OrderBy(x => x.Date).ToList();
+                        foreach (var item in list)
+                        {
+                            listLetters.Add(item);
+                        }
+                        ViewBag.Title = "Incoming letters";
+                    }
+                    else if (numberOfType == (int)NumberOfTypes.SendLetters)
+                    {
+                        var list = db.SendLetters.Where(x => x.OrderUserId == currentUserId).OrderBy(x => x.Date).ToList();
+                        foreach (var item in list)
+                        {
+                            listLetters.Add(item);
+                        }
+                        ViewBag.Title = "Send letters";
+                    }
+                    else if (numberOfType == (int)NumberOfTypes.SpamLetters)
+                    {
+                        var list = db.SpamLetters.Where(x => x.OrderUserId == currentUserId).OrderBy(x => x.Date).ToList();
+                        foreach (var item in list)
+                        {
+                            listLetters.Add(item);
+                        }
+                        ViewBag.Title = "Spam letters";
+                    }
+                }
+            }
+                ViewBag.NumberOfType = numberOfType;
+                return PartialView(listLetters);
         }
 
         [HttpPost]
@@ -173,15 +211,14 @@ namespace YourMail.Controllers
                     var incLetter=db.IncomingLetters.FirstOrDefault(x => x.LetterId == letterId || x.OrderUserId == userId);
                     if (incLetter != null)
                     {
-                        var carrentLetter = db.Letters.First(x => x.Id == letterId);
-                        carrentLetter.NumberOfOwners = carrentLetter.NumberOfOwners-1;
-                        if (carrentLetter.NumberOfOwners == 0)
+                        incLetter.Letter.NumberOfOwners--;
+                        if (incLetter.Letter.NumberOfOwners == 0)
                         {
-                            db.Entry(carrentLetter).State = EntityState.Deleted;
+                            db.Entry(incLetter.Letter).State = EntityState.Deleted;
                         }
                         else
                         {
-                            db.Entry(carrentLetter).State = EntityState.Modified;
+                            db.Entry(incLetter.Letter).State = EntityState.Modified;
                         }
                         db.Entry(incLetter).State = EntityState.Deleted;
                     }
@@ -191,15 +228,14 @@ namespace YourMail.Controllers
                     var sendLetter = db.SendLetters.FirstOrDefault(x => x.LetterId == letterId || x.OrderUserId == userId);
                     if (sendLetter != null)
                     {
-                        var carrentLetter = db.Letters.First(x => x.Id == letterId);
-                        carrentLetter.NumberOfOwners = carrentLetter.NumberOfOwners - 1;
-                        if (carrentLetter.NumberOfOwners == 0)
+                        sendLetter.Letter.NumberOfOwners--;
+                        if (sendLetter.Letter.NumberOfOwners == 0)
                         {
-                            db.Entry(carrentLetter).State = EntityState.Deleted;
+                            db.Entry(sendLetter.Letter).State = EntityState.Deleted;
                         }
                         else
                         {
-                            db.Entry(carrentLetter).State = EntityState.Modified;
+                            db.Entry(sendLetter.Letter).State = EntityState.Modified;
                         }
                         db.Entry(sendLetter).State = EntityState.Deleted;
                     }
@@ -209,15 +245,14 @@ namespace YourMail.Controllers
                     var spamLetter = db.SendLetters.FirstOrDefault(x => x.LetterId == letterId || x.OrderUserId == userId);
                     if (spamLetter != null)
                     {
-                        var carrentLetter = db.Letters.First(x => x.Id == letterId);
-                        carrentLetter.NumberOfOwners = carrentLetter.NumberOfOwners - 1;
-                        if (carrentLetter.NumberOfOwners == 0)
+                        spamLetter.Letter.NumberOfOwners--;
+                        if (spamLetter.Letter.NumberOfOwners == 0)
                         {
-                            db.Entry(carrentLetter).State = EntityState.Deleted;
+                            db.Entry(spamLetter.Letter).State = EntityState.Deleted;
                         }
                         else
                         {
-                            db.Entry(carrentLetter).State = EntityState.Modified;
+                            db.Entry(spamLetter.Letter).State = EntityState.Modified;
                         }
                         db.Entry(spamLetter).State = EntityState.Deleted;
                     }
@@ -241,6 +276,7 @@ namespace YourMail.Controllers
             newLetter.ToWhom = fromWhom;
             return View("New_letter", newLetter);
         }
+
         [Authorize]
         public ActionResult ForwardLetter(int? letterId)
         {
