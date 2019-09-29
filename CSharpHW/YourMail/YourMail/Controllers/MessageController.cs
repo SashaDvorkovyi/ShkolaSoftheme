@@ -88,7 +88,7 @@ namespace YourMail.Controllers
 
         [HttpPost]
         [Authorize]
-        public PartialViewResult DeleteAllSelected(int[] arrayIdOfLetters, int? numberOfType)
+        public ActionResult DeleteAllSelected(int[] arrayIdOfLetters, int? numberOfType)
         {
             if (arrayIdOfLetters != null)
             {
@@ -158,45 +158,7 @@ namespace YourMail.Controllers
                     db.SaveChanges();
                 }
             }
-
-
-            var currentUserId = WebSecurity.CurrentUserId;
-            var listLetters = new List<ITypesOfLetter>();
-            if (numberOfType != null)
-            {
-                using (var db = new DataBaseContext())
-                {
-                    if (numberOfType == (int)NumberOfTypes.IncomingLetters)
-                    {
-                        var list = db.IncomingLetters.Where(x => x.OrderUserId == currentUserId).OrderBy(x => x.Date).ToList();
-                        foreach (var item in list)
-                        {
-                            listLetters.Add(item);
-                        }
-                        ViewBag.Title = "Incoming letters";
-                    }
-                    else if (numberOfType == (int)NumberOfTypes.SendLetters)
-                    {
-                        var list = db.SendLetters.Where(x => x.OrderUserId == currentUserId).OrderBy(x => x.Date).ToList();
-                        foreach (var item in list)
-                        {
-                            listLetters.Add(item);
-                        }
-                        ViewBag.Title = "Send letters";
-                    }
-                    else if (numberOfType == (int)NumberOfTypes.SpamLetters)
-                    {
-                        var list = db.SpamLetters.Where(x => x.OrderUserId == currentUserId).OrderBy(x => x.Date).ToList();
-                        foreach (var item in list)
-                        {
-                            listLetters.Add(item);
-                        }
-                        ViewBag.Title = "Spam letters";
-                    }
-                }
-            }
-                ViewBag.NumberOfType = numberOfType;
-                return PartialView(listLetters);
+            return RedirectToAction("ShowTypesLetters", "Message", new { numberOfType });
         }
 
         [HttpPost]
@@ -211,14 +173,15 @@ namespace YourMail.Controllers
                     var incLetter=db.IncomingLetters.FirstOrDefault(x => x.LetterId == letterId || x.OrderUserId == userId);
                     if (incLetter != null)
                     {
-                        incLetter.Letter.NumberOfOwners--;
-                        if (incLetter.Letter.NumberOfOwners == 0)
+                        var carrentLetter = db.Letters.First(x => x.Id == letterId);
+                        carrentLetter.NumberOfOwners = carrentLetter.NumberOfOwners-1;
+                        if (carrentLetter.NumberOfOwners == 0)
                         {
-                            db.Entry(incLetter.Letter).State = EntityState.Deleted;
+                            db.Entry(carrentLetter).State = EntityState.Deleted;
                         }
                         else
                         {
-                            db.Entry(incLetter.Letter).State = EntityState.Modified;
+                            db.Entry(carrentLetter).State = EntityState.Modified;
                         }
                         db.Entry(incLetter).State = EntityState.Deleted;
                     }
@@ -228,14 +191,15 @@ namespace YourMail.Controllers
                     var sendLetter = db.SendLetters.FirstOrDefault(x => x.LetterId == letterId || x.OrderUserId == userId);
                     if (sendLetter != null)
                     {
-                        sendLetter.Letter.NumberOfOwners--;
-                        if (sendLetter.Letter.NumberOfOwners == 0)
+                        var carrentLetter = db.Letters.First(x => x.Id == letterId);
+                        carrentLetter.NumberOfOwners = carrentLetter.NumberOfOwners - 1;
+                        if (carrentLetter.NumberOfOwners == 0)
                         {
-                            db.Entry(sendLetter.Letter).State = EntityState.Deleted;
+                            db.Entry(carrentLetter).State = EntityState.Deleted;
                         }
                         else
                         {
-                            db.Entry(sendLetter.Letter).State = EntityState.Modified;
+                            db.Entry(carrentLetter).State = EntityState.Modified;
                         }
                         db.Entry(sendLetter).State = EntityState.Deleted;
                     }
@@ -245,14 +209,15 @@ namespace YourMail.Controllers
                     var spamLetter = db.SendLetters.FirstOrDefault(x => x.LetterId == letterId || x.OrderUserId == userId);
                     if (spamLetter != null)
                     {
-                        spamLetter.Letter.NumberOfOwners--;
-                        if (spamLetter.Letter.NumberOfOwners == 0)
+                        var carrentLetter = db.Letters.First(x => x.Id == letterId);
+                        carrentLetter.NumberOfOwners = carrentLetter.NumberOfOwners - 1;
+                        if (carrentLetter.NumberOfOwners == 0)
                         {
-                            db.Entry(spamLetter.Letter).State = EntityState.Deleted;
+                            db.Entry(carrentLetter).State = EntityState.Deleted;
                         }
                         else
                         {
-                            db.Entry(spamLetter.Letter).State = EntityState.Modified;
+                            db.Entry(carrentLetter).State = EntityState.Modified;
                         }
                         db.Entry(spamLetter).State = EntityState.Deleted;
                     }
@@ -276,7 +241,6 @@ namespace YourMail.Controllers
             newLetter.ToWhom = fromWhom;
             return View("New_letter", newLetter);
         }
-
         [Authorize]
         public ActionResult ForwardLetter(int? letterId)
         {
@@ -409,13 +373,16 @@ namespace YourMail.Controllers
                             listLetters.Add(item);
                         }
                         ViewBag.Title = "Spam letters";
+                        ViewBag.NP = "1";
                     }
                 }
             }
             if (listLetters.Count >= 1)
             {
                 ViewBag.NumberOfType = numberOfType;
+                ViewBag.NP = "1";
                 return View(listLetters);
+
             }
             else
             {
@@ -428,6 +395,7 @@ namespace YourMail.Controllers
         public ActionResult ShowTypesLetters(int[] a, int? numberOfType)
         {
             ViewBag.NumberOfType = numberOfType;
+
             return View();
         }
 
