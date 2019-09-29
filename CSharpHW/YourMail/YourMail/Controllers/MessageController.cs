@@ -34,7 +34,7 @@ namespace YourMail.Controllers
             return null;
         }
 
-        [HttpPost]
+        //[HttpPost]
         [Authorize]
         public ActionResult OpenLetter(int? letterId, int? numberOfType)
         {
@@ -339,7 +339,7 @@ namespace YourMail.Controllers
         }
 
         [Authorize]
-        public ActionResult ShowTypesLetters(int? numberOfType)
+        public ActionResult ShowTypesLetters(int? numberOfType, int? namberOfPeage)
         {
             var currentUserId = WebSecurity.CurrentUserId;
             var listLetters = new List<ITypesOfLetter>();
@@ -373,14 +373,14 @@ namespace YourMail.Controllers
                             listLetters.Add(item);
                         }
                         ViewBag.Title = "Spam letters";
-                        ViewBag.NP = "1";
+                        ViewBag.NamberOfPeage = namberOfPeage == null? 1 : namberOfPeage;
                     }
                 }
             }
             if (listLetters.Count >= 1)
             {
                 ViewBag.NumberOfType = numberOfType;
-                ViewBag.NP = "1";
+                ViewBag.NamberOfPeage = namberOfPeage == null ? 1 : namberOfPeage;
                 return View(listLetters);
 
             }
@@ -392,12 +392,14 @@ namespace YourMail.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult ShowTypesLetters(int[] a, int? numberOfType)
+        public ActionResult ShowTypesLetters(int[] a, int? numberOfType, int? namberOfPeage)
         {
             ViewBag.NumberOfType = numberOfType;
-
+            ViewBag.NamberOfPeage = namberOfPeage == null ? 1 : namberOfPeage;
             return View();
         }
+
+
 
         public Letter CreateNewLetter(Letter letter, UserProfile user, List<string> allRecipients, HttpPostedFileBase upload)
         {

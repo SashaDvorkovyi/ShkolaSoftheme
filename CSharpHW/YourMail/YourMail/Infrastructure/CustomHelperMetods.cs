@@ -32,7 +32,11 @@ namespace YourMail.Infrastructure
             foreach (var tletter in tLetters)
             {
                 caunter++;
-                var intNamberPage = int.Parse(namberPage);
+                var intNamberPage = 1;
+                if (namberPage != null)
+                {
+                    intNamberPage = int.Parse(namberPage);
+                }
                 if (  caunter > ((intNamberPage - 1)*5)  &&  caunter < ((intNamberPage - 1) * 5 + 5))
                 {
                     tagTr = new TagBuilder("tr");
@@ -62,6 +66,7 @@ namespace YourMail.Infrastructure
                     tagInput.Attributes.Add("type", "button");
                     tagInput.Attributes.Add("name", tletter.Id.ToString());
                     tagInput.Attributes.Add("value", "Open");
+                    tagInput.AddCssClass("Open");
                     tagTd.InnerHtml += tagInput.ToString();
                     tagTr.InnerHtml += tagTd.ToString();
 
@@ -70,6 +75,7 @@ namespace YourMail.Infrastructure
                     tagInput.Attributes.Add("type", "button");
                     tagInput.Attributes.Add("name", tletter.Id.ToString());
                     tagInput.Attributes.Add("value", "Delete");
+                    tagInput.AddCssClass("Delete");
                     tagTd.InnerHtml += tagInput.ToString();
                     tagTr.InnerHtml += tagTd.ToString();
 

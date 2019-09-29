@@ -1,74 +1,71 @@
 ﻿@model IEnumerable<YourMail.Interfaces.ITypesOfLetter>
 @using YourMail.Infrastructure;
-<div id="ajaxgrid">
-    @{
-        var grid = new WebGrid(source: Model, rowsPerPage: 5, selectionFieldName: "SelectedRow", ajaxUpdateContainerId: "ajaxgrid");
-    }
-</div>
+
 <hgroup class="title">
-    <h2>@ViewBag.Title.</h2>
-    <h2>@ViewBag.NP</h2>
+    <h2>@ViewBag.Title</h2>
 </hgroup>
 
-<section>
+
+<section id="wrapper">
     @Html.MyGrid(Model, ViewBag.NP as string);
 </section>
 
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+    @Scripts.Render("~/bundles/jqueryval");
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="jquery-1.8.1.js" type="text/javascript"></script>
+    <script type="text/javascript">
 
-<script type="text/javascript">
-    $(document).ready(function ()
-    {
-
-        stileForDontRead();
-        function stileForDontRead() {
-            $(".IsRead").each(function () {
-                if ($(this).attr("name") === "False") {
-                    $(this).closest("tr").css({ "border-color": "#008a77", "border-style": "solid" });
-                }
+        $(function () {
+            $(".Open").click(function (event) {
+                makeRequest($(this).attr("name"));
             });
-        }
 
+            function makeRequest(id) {
+                var a ="/Message/OpenLetter?letterId=" + id + "&numberOfType=@ViewBag.NumberOfType";
+                location.href = "/Message/OpenLetter?letterId=" + id + "&numberOfType=@ViewBag.NumberOfType";
+            };
 
-        var arrayIdOfLetters = new Array();
-        $("#SendIdLettersForDelete").on("click", function ()
-        {
-            $(".CheckForDelete").each(function ()
-            {
-                if ($(this).prop("checked") === true)
-                {
-                    var idLetterForDelete = $(this).attr("name");
-                    arrayIdOfLetters.push(idLetterForDelete);
-                }
-            });
-            $.ajax({
-                type: "POST",
-                url: "@Url.Action("DeleteAllSelected", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType })",
-                data: JSON.stringify(arrayIdOfLetters),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (result) {
-                    if (result == "OK") {
-                        location.reload();
+            stileForDontRead();
+            function stileForDontRead() {
+                $(".IsRead").each(function () {
+                    if ($(this).attr("name") === "False") {
+                        $(this).closest("tr").css({ "border-color": "#008a77", "border-style": "solid" });
                     }
-                    else
-                        alert(result);
-                },
-                error: function (result) {
-                    alert('Error!');
-                }
-            });
-        });
+                });
+            }
 
-        $("#CheckUncheckAllCheckbox").change(function ()
-        {
-            var checkUnchek = $(this).prop("checked");
-            $(".CheckForDelete").prop("checked", checkUnchek);
+            var arrayIdOfLetters = new Array();
+            $("#SendIdLettersForDelete").on("click", function () {
+                $(".CheckForDelete").each(function () {
+                    if ($(this).prop("checked") === true) {
+                        var idLetterForDelete = $(this).attr("name");
+                        arrayIdOfLetters.push(idLetterForDelete);
+                    }
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("DeleteAllSelected", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType })",
+                    data: JSON.stringify(arrayIdOfLetters),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result == "OK") {
+                            location.reload();
+                        }
+                        else
+                            alert(result);
+                    },
+                    error: function (result) {
+                        alert('Error!');
+                    }
+                });
+
+                $("#CheckUncheckAllCheckbox").change(function () {
+                    var checkUnchek = $(this).prop("checked");
+                    $(".CheckForDelete").prop("checked", checkUnchek);
+                });
+            });
+
         });
-    });
-</script>
+    </script>
+}
