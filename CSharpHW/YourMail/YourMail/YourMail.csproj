@@ -185,6 +185,7 @@
     <Compile Include="Models\SpamLetter.cs" />
     <Compile Include="Models\SpamMeil.cs" />
     <Compile Include="Models\DataBaseContext.cs" />
+    <Compile Include="Models\TypesOfLetter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -237,6 +238,7 @@
     <Content Include="Views\Message\AddSpamMail.cshtml" />
     <Content Include="Views\Message\ShowTypesLetters.cshtml" />
     <Content Include="Views\Message\OpenLetter.cshtml" />
+    <Content Include="Views\Message\_TypesLetters.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Files\" />

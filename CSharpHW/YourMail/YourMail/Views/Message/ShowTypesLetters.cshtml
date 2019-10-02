@@ -7,23 +7,26 @@
 
 
 <section id="wrapper">
-    @Html.MyGrid(Model, ViewBag.NP as string);
+    <input type="checkbox" id="Check123" />
+    <input type="button" id="SendIdLettersForDelete" value="Send Letter for delete" />
+    <div id="table">
+        @Html.MyGrid(Model, ViewBag.NamberOfPeage as string)
+    </div>
 </section>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval");
-
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <script type="text/javascript">
 
         $(function () {
-            $(".Open").click(function (event) {
-                makeRequest($(this).attr("name"));
+            $(".Open").click(function () {
+                location.href="@Url.Action("OpenLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType } )"+"&letterId="+$(this).attr("name");
             });
 
-            function makeRequest(id) {
-                var a ="/Message/OpenLetter?letterId=" + id + "&numberOfType=@ViewBag.NumberOfType";
-                location.href = "/Message/OpenLetter?letterId=" + id + "&numberOfType=@ViewBag.NumberOfType";
-            };
+            $(".Delete").click(function () {
+                location.href="@Url.Action("DeleteLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType } )"+"&letterId="+$(this).attr("name");
+            });
 
             stileForDontRead();
             function stileForDontRead() {
@@ -34,6 +37,10 @@
                 });
             }
 
+            $("#Check123").change(function () {
+                var checkUnchek = $(this).prop("checked");
+                $(".CheckForDelete").prop("checked", checkUnchek);
+            });
             var arrayIdOfLetters = new Array();
             $("#SendIdLettersForDelete").on("click", function () {
                 $(".CheckForDelete").each(function () {
@@ -43,29 +50,21 @@
                     }
                 });
                 $.ajax({
+                    url: "@Url.Action("DeleteAllSelected", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType, namberOfPeage=ViewBag.NamberOfPeage })",
                     type: "POST",
-                    url: "@Url.Action("DeleteAllSelected", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType })",
                     data: JSON.stringify(arrayIdOfLetters),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
                     success: function (result) {
-                        if (result == "OK") {
-                            location.reload();
-                        }
-                        else
-                            alert(result);
+                        var a = result;
+                            var wraperTable = $("#table");
+                            wraperTable.empty();
+                        wraperTable.html(result);
                     },
-                    error: function (result) {
-                        alert('Error!');
-                    }
-                });
-
-                $("#CheckUncheckAllCheckbox").change(function () {
-                    var checkUnchek = $(this).prop("checked");
-                    $(".CheckForDelete").prop("checked", checkUnchek);
+                    error: function () {
+                        //$("#articleContent").text(response);
+                        alert("error:");
+                    },
                 });
             });
-
         });
     </script>
 }

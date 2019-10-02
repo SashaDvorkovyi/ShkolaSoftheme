@@ -14,6 +14,7 @@ namespace YourMail.Controllers
 {
     public class MessageController : Controller
     {
+
         public FilePathResult DownloadFile(int? letterId)
         {
             var userId = WebSecurity.CurrentUserId;
@@ -34,7 +35,6 @@ namespace YourMail.Controllers
             return null;
         }
 
-        //[HttpPost]
         [Authorize]
         public ActionResult OpenLetter(int? letterId, int? numberOfType)
         {
@@ -88,8 +88,11 @@ namespace YourMail.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult DeleteAllSelected(int[] arrayIdOfLetters, int? numberOfType)
+        public ActionResult DeleteAllSelected(int[] arrayIdOfLetters, int? numberOfType, int? namberOfPeage)
         {
+
+            var listLetters = new List<ITypesOfLetter>();
+
             if (arrayIdOfLetters != null)
             {
                 var userId = WebSecurity.CurrentUserId;
@@ -114,6 +117,7 @@ namespace YourMail.Controllers
                                 db.Entry(incomingLetter).State = EntityState.Deleted;
                             }
                         }
+                        listLetters.AddRange(listIncomingLetters);
                     }
                     else if (numberOfType == (int)NumberOfTypes.SendLetters)
                     {
@@ -134,6 +138,7 @@ namespace YourMail.Controllers
                                 db.Entry(sendLetter).State = EntityState.Deleted;
                             }
                         }
+                        listLetters.AddRange(listSendLetters);
                     }
                     else if (numberOfType == (int)NumberOfTypes.SpamLetters)
                     {
@@ -154,14 +159,15 @@ namespace YourMail.Controllers
                                 db.Entry(spamLetter).State = EntityState.Deleted;
                             }
                         }
+                        listLetters.AddRange(listSpamLetters);
                     }
                     db.SaveChanges();
                 }
             }
-            return RedirectToAction("ShowTypesLetters", "Message", new { numberOfType });
+            return Content( CustomHelperMetods.MyGrid(listLetters, namberOfPeage.ToString()));
         }
 
-        [HttpPost]
+
         [Authorize]
         public ActionResult DeleteLetter(int? letterId, int? numberOfType)
         {
@@ -225,6 +231,7 @@ namespace YourMail.Controllers
                 db.SaveChanges();
             }
             return RedirectToAction("ShowTypesLetters", "Message", new { numberOfType });
+            //return new EmptyResult();
         }
 
         [Authorize]
@@ -497,6 +504,34 @@ namespace YourMail.Controllers
             {
                 return null;
             }
+        }
+        public ITypesOfLetter ReturnTypeOfLetters(int? numberOfType)
+        {
+            if (numberOfType != null)
+            {
+                if (numberOfType == (int)NumberOfTypes.IncomingLetters)
+                {
+                    return new IncomingLetter();
+                }
+                else if (numberOfType == (int)NumberOfTypes.SendLetters)
+                {
+                    return new SendLetter();
+                }
+                else if (numberOfType == (int)NumberOfTypes.SpamLetters)
+                {
+                    return new SpamLetter();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+
+           
         }
     }
 }

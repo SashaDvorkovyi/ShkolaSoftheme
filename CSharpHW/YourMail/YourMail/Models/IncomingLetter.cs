@@ -4,25 +4,7 @@ using YourMail.Interfaces;
 
 namespace YourMail.Models
 {
-    public class IncomingLetter : ITypesOfLetter
+    public class IncomingLetter : TypesOfLetter, ITypesOfLetter
     {
-        [Key]
-        public int Id { get; set; }
-
-        public bool IsRead { get; set; }
-
-        public string Subject { get; set; }
-
-        public string ToOrFromWhomMail { get; set; }
-
-        public DateTime? Date { get; set; }
-
-        public int? OrderUserId { get; set; }
-
-        public int? LetterId { get; set; }
-
-        public virtual UserProfile OrderUser { get; set; }
-
-        public virtual Letter Letter { get; set; }
     }
 }
