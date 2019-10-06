@@ -15,7 +15,7 @@ namespace YourMail.Models
         public string UserMail { get; set; }
 
         public const int MaxIncomingLetters = 200;
-        public const int MaxSentLetters = 200;
+        public const int MaxSendLetters = 200;
         public const int MaxSpamLetters = 200;
         public const int MaxSpamMail = 200;
 
@@ -26,12 +26,6 @@ namespace YourMail.Models
             SpamLetters = new List<SpamLetter>();
             SpamMeils = new List<SpamMeil>();
         }
-
-        public int? CountAllIncomingLetters { get; set; }
-        public int? CountDontReadIncomingLetters { get; set; }
-        public int? CountAllSendLetters { get; set; }
-        public int? CountAllSpamLetters { get; set; }
-        public int? CountDontReadSpamLetters { get; set; }
 
         public virtual ICollection<IncomingLetter> IncomingLetters { get; set; }
         public virtual ICollection<SendLetter> SendLetters { get; set; }

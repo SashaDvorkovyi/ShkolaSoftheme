@@ -14,15 +14,13 @@ namespace YourMail.Interfaces
 
         bool IsRead { get; set; }
 
+        DataType Data { get; set; }
+
         string Subject { get; set; }
 
-        string ToOrFromWhomMail { get; set; }
+        string FromWhom { get; set; }
 
-        DateTime? Date { get; set; }
-
-        int? OrderUserId { get; set; }
-
-        int? LetterId { get; set; }
+        string ToWhoms { get; set; }
 
         UserProfile OrderUser { get; set; }
 

@@ -21,11 +21,11 @@
 
         $(function () {
             $(".Open").click(function () {
-                location.href="@Url.Action("OpenLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType } )"+"&letterId="+$(this).attr("name");
+                location.href="@Url.Action("OpenLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType} )"+"&letterId="+$(this).attr("name");
             });
 
             $(".Delete").click(function () {
-                location.href="@Url.Action("DeleteLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType } )"+"&letterId="+$(this).attr("name");
+                location.href="@Url.Action("DeleteLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType, namberOfPeage = ViewBag.NamberOfPeage } )"+"&letterId="+$(this).attr("name");
             });
 
             stileForDontRead();

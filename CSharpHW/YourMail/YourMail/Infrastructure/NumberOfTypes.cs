@@ -7,8 +7,8 @@ namespace YourMail.Infrastructure
 {
     public enum NumberOfTypes
     {
-        IncomingLetters = 1,
-        SendLetters = 2,
-        SpamLetters = 3
+        IncomingLetters = 0,
+        SendLetters = 1,
+        SpamLetters = 2
     }
 }
