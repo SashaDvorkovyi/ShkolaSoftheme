@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using YourMail.Interfaces;
+using YourMail.Models;
 
 namespace YourMail.Infrastructure
 {
@@ -66,11 +67,18 @@ namespace YourMail.Infrastructure
                     tagTr.InnerHtml += tagTd.ToString();
 
                     tagTd = new TagBuilder("td");
-                    tagTd.SetInnerText(letter.Date.ToString());
+                    tagTd.SetInnerText(letter.Data.ToString());
                     tagTr.InnerHtml += tagTd.ToString();
 
                     tagTd = new TagBuilder("td");
-                    tagTd.SetInnerText(letter.ToOrFromWhomMail.ToString());
+                    if (letter is SendLetter)
+                    {
+                        tagTd.SetInnerText(letter.ToWhoms.ToString());
+                    }
+                    else
+                    {
+                        tagTd.SetInnerText(letter.FromWhom.ToString());
+                    }
                     tagTr.InnerHtml += tagTd.ToString();
 
                     tagTd = new TagBuilder("td");

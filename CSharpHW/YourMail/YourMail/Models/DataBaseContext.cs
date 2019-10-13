@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Data.Entity;
 using YourMail.Interfaces;
 
@@ -21,7 +19,7 @@ namespace YourMail.Models
         }
 
         public DbSet<UserProfile> UserProfiles { get; set; }
-        public DbSet<Letter> Letters { get; set; }
+        public DbSet<LetterForDB> LettersForDB { get; set; }
         public DbSet<IncomingLetter> IncomingLetters { get; set; }
         public DbSet<SendLetter> SendLetters { get; set; }
         public DbSet<SpamLetter> SpamLetters { get; set; }

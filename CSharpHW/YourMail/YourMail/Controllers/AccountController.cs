@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Web.Security;
 using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
 using YourMail.Filters;
 using YourMail.Models;
-using System.Linq;
-using YourMail.Interfaces;
-using System.Data.Entity;
 
 namespace YourMail.Controllers
 {

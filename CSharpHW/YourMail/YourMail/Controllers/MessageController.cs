@@ -20,7 +20,7 @@ namespace YourMail.Controllers
             var userId = WebSecurity.CurrentUserId;
             using (var db = new DataBaseContext())
             {
-                var letter = db.Letters.FirstOrDefault(x => x.Id == letterId);
+                var letter = db.LettersForDB.FirstOrDefault(x => x.Id == letterId);
                 if (letter != null)
                 {
                     if ((letter.SendLetters.Any(x => x.OrderUser.Id == userId)) || (letter.IncomingLetters.Any(x => x.OrderUser.Id == userId)) || (letter.SendLetters.Any(x => x.OrderUser.Id == userId)))
@@ -50,7 +50,8 @@ namespace YourMail.Controllers
                         typeOfLetter.IsRead = true;
                         db.Entry(typeOfLetter).State = EntityState.Modified;
                         db.SaveChanges();
-                        return View(typeOfLetter.Letter);
+                        ViewBag.NumberOfType = numberOfType;
+                        return View(new Letter(typeOfLetter.LetterForDB, typeOfLetter));
                     }
                 }
             }
@@ -71,20 +72,24 @@ namespace YourMail.Controllers
                 {
                     if (numberOfType != null && numberOfType < 3)
                     {
-                        var listTypeOfLetter = (db.listTypesOfLetter[(int)numberOfType].Join(arrayIdOfLetters, x => x.Id, y => y, (x, y) => x).Where(x => x.OrderUser.Id == userId)).Include(x => x.Letter);
+                        var listTypeOfLetter = (db.listTypesOfLetter[(int)numberOfType]
+                                               .Join(arrayIdOfLetters, x => x.Id, y => y, (x, y) => x)
+                                               .Where(x => x.OrderUser.Id == userId))
+                                               .Include(x => x.LetterForDB);
+
                         if (listTypeOfLetter != null)
                         {
                             foreach (var typeOfLetter in listTypeOfLetter)
                             {
-                                typeOfLetter.Letter.NumberOfOwners--;
+                                typeOfLetter.LetterForDB.NumberOfOwners--;
 
-                                if (typeOfLetter.Letter.NumberOfOwners == 0)
+                                if (typeOfLetter.LetterForDB.NumberOfOwners == 0)
                                 {
-                                    db.Entry(typeOfLetter.Letter).State = EntityState.Deleted;
+                                    db.Entry(typeOfLetter.LetterForDB).State = EntityState.Deleted;
                                 }
                                 else
                                 {
-                                    db.Entry(typeOfLetter.Letter).State = EntityState.Modified;
+                                    db.Entry(typeOfLetter.LetterForDB).State = EntityState.Modified;
                                 }
                                 db.Entry(typeOfLetter).State = EntityState.Deleted;
                             }
@@ -106,16 +111,16 @@ namespace YourMail.Controllers
             {
                 if (numberOfType != null && numberOfType < 3)
                 {
-                    var typeLetter = db.listTypesOfLetter[(int)numberOfType].FirstOrDefault(x => x.Letter.Id == letterId || x.OrderUser.Id == userId);
+                    var typeLetter = db.listTypesOfLetter[(int)numberOfType].FirstOrDefault(x => x.LetterForDB.Id == letterId || x.OrderUser.Id == userId);
                     if (typeLetter != null)
                     {
-                        if (typeLetter.Letter.NumberOfOwners == 0)
+                        if (typeLetter.LetterForDB.NumberOfOwners == 0)
                         {
-                            db.Entry(typeLetter.Letter).State = EntityState.Deleted;
+                            db.Entry(typeLetter.LetterForDB).State = EntityState.Deleted;
                         }
                         else
                         {
-                            db.Entry(typeLetter.Letter).State = EntityState.Modified;
+                            db.Entry(typeLetter.LetterForDB).State = EntityState.Modified;
                         }
                         db.Entry(typeLetter).State = EntityState.Deleted;
                     }
@@ -136,37 +141,25 @@ namespace YourMail.Controllers
         public ActionResult AnswerLetter(string fromWhom)
         {
             var newLetter = new Letter();
-            newLetter.ToWhom = fromWhom;
+            newLetter.ToWhoms = fromWhom;
             return View("New_letter", newLetter);
         }
         [Authorize]
-        public ActionResult ForwardLetter(int? letterId)
+        public ActionResult ForwardLetter(int? letterId, int? numberOfType)
         {
-            var letter = new Letter();
-            var userName = User.Identity.Name;
-            ViewBag.user = userName;
-            using (var db = new DataBaseContext())
+            if (numberOfType != null && letterId != null && numberOfType < 3 && numberOfType >= 0)
             {
-                letter = db.Letters.FirstOrDefault(x => x.Id == letterId);
-                if (letter.Id != 0)
+                var userName = User.Identity.Name;
+                ViewBag.user = userName;
+                using (var db = new DataBaseContext())
                 {
-                    if (userName.Equals(letter.FromWhom))
+                    var typeOfLetter = db.listTypesOfLetter[(int)numberOfType].FirstOrDefault(x => x.LetterForDB.Id == letterId && userName == x.OrderUser.UserMail);
+                    if (typeOfLetter != null)
                     {
-                        return View("New_letter", letter);
-                    }
-                    else
-                    {
-                        var listRecipients = GetAllRecipients(letter);
-                        foreach (var resipient in listRecipients)
-                        {
-                            if (userName.Equals(resipient))
-                            {
-                                return View("New_letter", letter);
-                            }
-                        }
+                        typeOfLetter.ToWhoms = "";
+                        return View("New_letter", new Letter(typeOfLetter.LetterForDB, typeOfLetter));
                     }
                 }
-
             }
             return RedirectToAction("Index", "Home");
         }
@@ -174,55 +167,44 @@ namespace YourMail.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public ActionResult New_letter(Letter letter, HttpPostedFileBase upload, int? letterId)
+        public ActionResult New_letter(Letter letter, HttpPostedFileBase upload)
         {
-            using (var db = new DataBaseContext())
+            if (letter != null)
             {
-                var listAllRecidients = GetAllRecipients(letter);
-
-                var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == User.Identity.Name);
-                db.Letters.Add(CreateNewLetter(letter, user, listAllRecidients.Count, upload));
-
-
-                if (user.SendLetters.Count >= UserProfile.MaxSendLetters)
+                using (var db = new DataBaseContext())
                 {
-                    var oldestSendLetter=user.SendLetters.First(x => x.Data == user.SendLetters.Min(y => y.Data));
-                    if (--oldestSendLetter.Letter.NumberOfOwners == 0)
+                    var listAllRecidients = GetAllRecipients(letter);
+                    var listToWhomUserProfile = db.UserProfiles.Join(listAllRecidients, x=>x.UserMail, y=>y, (x, y)=>x);
+
+                    var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == User.Identity.Name);
+
+                    letter.FromWhom = user.UserMail;
+                    letter.Data = DateTime.Now;
+
+                    var letterForDB = CreateNewLetterForDB(letter, user, listAllRecidients.Count, upload);
+
+                    db.LettersForDB.Add(letterForDB);
+
+                    DeleteTypeFoLetterIfCountMoreThenMAX(UserProfile.MaxSendLetters, (int)NumberOfTypes.SendLetters, db, user);
+                    db.SendLetters.Add(CreateTypeOfLetter<SendLetter>(letter, user, letterForDB));
+
+                    foreach(var toWhom in listToWhomUserProfile)
                     {
-                        db.Entry(oldestSendLetter.Letter).State = EntityState.Deleted;
-                    }
-                    db.Entry(oldestSendLetter).State = EntityState.Deleted;
-                    db.Entry(user.IncomingLetters.Min(x=>x.Letter.Date)).State = EntityState.Added;
-                }
-                else
-                {
-                    db.Entry(CreateTypeOfLetter<SendLetter>(letter, user, letter.ToWhom)).State = EntityState.Added;
-                }
-                
 
-
-
-                foreach (var resipient in (db.UserProfiles.Join(listAllRecidients, x => x.UserMail, y => y, (x, y) => x).Include(x => x.SpamMeils)))
-                {
-                    var send = false;
-                    foreach (var spamMail in resipient.SpamMeils)
-                    {
-                        if (spamMail.ToWhomMail == user.UserMail)
+                        if (toWhom.SpamMeils.Any(x=>x.ToWhomMail != user.UserMail))
                         {
-                            db.Entry(CreateTypeOfLetter<SpamLetter>(letter, resipient, user.UserMail)).State = EntityState.Added;
-                            send = true;
-                            break;
+                            DeleteTypeFoLetterIfCountMoreThenMAX(UserProfile.MaxIncomingLetters, (int)NumberOfTypes.IncomingLetters, db, user);
+                            db.IncomingLetters.Add(CreateTypeOfLetter<IncomingLetter>(letter, toWhom, letterForDB));
+                        }
+                        else
+                        {
+                            DeleteTypeFoLetterIfCountMoreThenMAX(UserProfile.MaxSpamLetters, (int)NumberOfTypes.SpamLetters, db, user);
+                            db.SpamLetters.Add(CreateTypeOfLetter<SpamLetter>(letter, toWhom, letterForDB));
                         }
                     }
-                    if (send != true)
-                    {
-                        db.Entry(CreateTypeOfLetter<IncomingLetter>(letter, resipient, user.UserMail)).State = EntityState.Added;
-                    }
+
+                    db.SaveChanges(); 
                 }
-
-               
-
-                db.SaveChanges();
             }
             return RedirectToAction("Index", "Home");
         }
@@ -240,12 +222,17 @@ namespace YourMail.Controllers
             using (var db = new DataBaseContext())
             {
                 var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == User.Identity.Name);
+                db.UserProfiles.Min(x=>x.Id);
+                if (user != null)
+                {
+                    if (user.SpamMeils.Count==UserProfile.MaxSpamMail)
+                    {
+                        db.Entry(user.SpamMeils.Where(x=>x.Id == user.SpamMeils.Min(y => y.Id))).State = EntityState.Deleted;
+                    }
+                    db.Entry(spamMeil).State = EntityState.Added;
 
-                spamMeil.OrderUserId = user.Id;
-
-                db.Entry(spamMeil).State = EntityState.Added;
-
-                db.SaveChanges();
+                    db.SaveChanges();
+                }
             }
 
             return RedirectToAction("AddSpamMail", "Message");
@@ -260,9 +247,9 @@ namespace YourMail.Controllers
             {
                 using (var db = new DataBaseContext())
                 {
-                    if (numberOfType != null && numberOfType < 3)
+                    if (numberOfType != null && numberOfType < 3 && numberOfType >= 0)
                     {
-                        listLetters = db.listTypesOfLetter[(int)numberOfType].Where(x => x.OrderUser.Id == currentUserId).OrderBy(x => x.Letter.Date).ToList();
+                        listLetters = db.listTypesOfLetter[(int)numberOfType].Where(x => x.OrderUser.Id == currentUserId).OrderBy(x => x.Data).ToList();
 
                         ViewBag.Title = numberOfType == (int)NumberOfTypes.IncomingLetters ? "Incoming Letters" : numberOfType ==
                                                                (int)NumberOfTypes.SendLetters ? "Send Letters" : "Spam letters";
@@ -290,9 +277,28 @@ namespace YourMail.Controllers
             return View();
         }
 
+        public void DeleteTypeFoLetterIfCountMoreThenMAX(int MAXCoun, int numberOfType, DataBaseContext db, UserProfile user)
+        {
+            if(db.listTypesOfLetter[numberOfType].Count(x => x.OrderUser.Id == user.Id) == MAXCoun)
+            {
+                var someTypeOfLetter=db.listTypesOfLetter[numberOfType].First(x => x.OrderUser.Id == user.Id && x.Data == db.listTypesOfLetter[numberOfType].Min(y => y.Data));
+                db.Entry(someTypeOfLetter).State = EntityState.Deleted;
+            }
+        }
 
+        public T CreateTypeOfLetter<T>(Letter letter, UserProfile user, LetterForDB letterForDB) where T : ITypesOfLetter, new()
+        {
+            var typeOfLetter = new T();
+            typeOfLetter.LetterForDB = letterForDB;
+            typeOfLetter.OrderUser = user;
+            typeOfLetter.Subject = letter.Subject;
+            typeOfLetter.Data = letter.Data;
+            typeOfLetter.FromWhom = letter.FromWhom;
+            typeOfLetter.ToWhoms = letter.ToWhoms;
+            return typeOfLetter;
+        }
 
-        public Letter CreateNewLetter(Letter letter, UserProfile user, int allRecipientsCount, HttpPostedFileBase upload)
+        public LetterForDB CreateNewLetterForDB(Letter letter, UserProfile user, int allRecipientsCount, HttpPostedFileBase upload)
         {
             if (upload != null)
             {
@@ -310,18 +316,16 @@ namespace YourMail.Controllers
                 letter.FileType = upload.ContentType;
                 letter.FileName = upload.FileName;
             }
-            letter.Date = DateTime.Now;
-            letter.FromWhom = user.UserMail;
             letter.NumberOfOwners = allRecipientsCount + 1; //"+1" This is the user who sent the lette
 
-            return letter;
+            return (LetterForDB)letter;
         }
 
         public List<string> GetAllRecipients(Letter letter)
         {
             var listRecipientPerson = new List<string>();
             var mail = default(string);
-            foreach (char x in letter.ToWhom)
+            foreach (char x in letter.ToWhoms)
             {
                 if (x == ' ' && mail != null)
                 {

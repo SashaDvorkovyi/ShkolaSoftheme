@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 using YourMail.Models;
 
 namespace YourMail.Interfaces
@@ -14,7 +11,7 @@ namespace YourMail.Interfaces
 
         bool IsRead { get; set; }
 
-        DataType Data { get; set; }
+        DateTime? Data { get; set; }
 
         string Subject { get; set; }
 
@@ -24,6 +21,6 @@ namespace YourMail.Interfaces
 
         UserProfile OrderUser { get; set; }
 
-        Letter Letter { get; set; }
+        LetterForDB LetterForDB { get; set; }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using YourMail.Interfaces;
 
 namespace YourMail.Models
 {
-    public class Letter
+    public class Letter : LetterForDB
     {
         public Letter()
         {
@@ -13,33 +14,34 @@ namespace YourMail.Models
             SpamLetters = new List<SpamLetter>();
         }
 
-        [Key]
-        public int Id { get; set; }
+        public Letter(LetterForDB letterForDB, ITypesOfLetter typeOfLetter)
+        {
+            Id = letterForDB.Id;
+            Content = letterForDB.Content;
+            FileName = letterForDB.FileName;
+            FilePuth = letterForDB.FilePuth;
+            FileType = letterForDB.FileType;
+            AdresOfFile = letterForDB.AdresOfFile;
+            NumberOfOwners = letterForDB.NumberOfOwners;
+            IncomingLetters = letterForDB.IncomingLetters;
+            SendLetters = letterForDB.SendLetters;
+            SpamLetters = letterForDB.SpamLetters;
 
-        public string Content { get; set; }
+            Subject = typeOfLetter.Subject;
+            Data = typeOfLetter.Data;
+            FromWhom = typeOfLetter.FromWhom;
+            ToWhoms = typeOfLetter.ToWhoms;
+
+        }
 
         [StringLength(50, ErrorMessage = "The long must be at least {0} characters.")]
         public string Subject { get; set; }
 
-        public DateTime? Date { get; set; }
+        public DateTime? Data { get; set; }
 
         public string FromWhom { get; set; }
 
         [Required]
-        public string ToWhom { get; set; }
-
-        public string FileName { get; set; }
-
-        public string FilePuth { get; set; }
-        
-        public string FileType { get; set; }
-
-        public string AdresOfFile { get; set; }
-
-        public int NumberOfOwners { get; set; }
-
-        public virtual ICollection<IncomingLetter> IncomingLetters { get; set; }
-        public virtual ICollection<SendLetter> SendLetters { get; set; }
-        public virtual ICollection<SpamLetter> SpamLetters { get; set; }
+        public string ToWhoms { get; set; }
     }
 }

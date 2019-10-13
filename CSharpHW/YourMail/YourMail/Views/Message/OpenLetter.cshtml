@@ -12,7 +12,7 @@
         </li>
         <li>
             @Html.Label("To whom:")<br />
-            @Html.Label(letter.ToWhom, htmlAttributes: new { name = "ToWhom" })<br />
+            @Html.Label(letter.ToWhoms, htmlAttributes: new { name = "ToWhom" })<br />
 
         </li>
         <li>
@@ -35,7 +35,7 @@
         <input type="hidden" name="fromWhom" value=@letter.FromWhom />
         <input type="submit" value="Answer letter" />
     }
-    @using (Html.BeginForm("ForwardLetter", "Message", routeValues: new { letterId = letter.Id }))
+    @using (Html.BeginForm("ForwardLetter", "Message", routeValues: new { letterId = letter.Id, numberOfType = ViewBag.NumberOfType }))
     {
         <input type="submit" value="Forward a letter" />
     }

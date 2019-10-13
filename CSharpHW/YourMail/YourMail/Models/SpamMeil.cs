@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace YourMail.Models
 {
@@ -10,8 +6,6 @@ namespace YourMail.Models
     {
         [Key]
         public int Id { get; set; }
-
-        public int? OrderUserId { get; set; }
 
         [EmailAddress]
         public string ToWhomMail { get; set; }
