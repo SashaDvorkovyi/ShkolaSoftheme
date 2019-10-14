@@ -15,20 +15,28 @@
 </section>
 
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval");
-    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-    <script type="text/javascript">
+<script type="text/javascript">
 
+        var arrayIdOfLetters = new Array();
+        var numberOfPage = 1;
+    var stringJSON;
+    var b = { arrayIdOfLetters: { [0]: 1, [1]: 1, [2]: 1 } };
+    alert(b);
+    var c = "arrayIdOfLetters: { [0]: 1, [1]: 1, [2]: 1 }";
         $(function () {
-            $(".Open").click(function () {
-                location.href="@Url.Action("OpenLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType} )"+"&letterId="+$(this).attr("name");
-            });
 
-            $(".Delete").click(function () {
-                location.href="@Url.Action("DeleteLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType, namberOfPeage = ViewBag.NamberOfPeage } )"+"&letterId="+$(this).attr("name");
-            });
+            function setForOpen() {
+                $(".Open").click(function () {
+                    location.href="@Url.Action("OpenLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType} )"+"&letterId="+$(this).attr("name");
+                });
+            }
 
-            stileForDontRead();
+            function setForDelete() {
+                $(".Delete").click(function () {
+                    location.href="@Url.Action("DeleteLetter", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType})" + "&NamberOfPeage=" + numberOfPage + "&letterId=" + $(this).attr("name");
+                });
+            }
+
             function stileForDontRead() {
                 $(".IsRead").each(function () {
                     if ($(this).attr("name") === "False") {
@@ -37,34 +45,87 @@
                 });
             }
 
-            $("#Check123").change(function () {
-                var checkUnchek = $(this).prop("checked");
-                $(".CheckForDelete").prop("checked", checkUnchek);
-            });
-            var arrayIdOfLetters = new Array();
-            $("#SendIdLettersForDelete").on("click", function () {
-                $(".CheckForDelete").each(function () {
-                    if ($(this).prop("checked") === true) {
-                        var idLetterForDelete = $(this).attr("name");
-                        arrayIdOfLetters.push(idLetterForDelete);
-                    }
+            function setForCheckedAnCheked(){
+                $("#Check123").change(function () {
+                    var checkUnchek = $(this).prop("checked");
+                    $(".CheckForDelete").prop("checked", checkUnchek);
                 });
-                $.ajax({
-                    url: "@Url.Action("DeleteAllSelected", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType, namberOfPeage=ViewBag.NamberOfPeage })",
-                    type: "POST",
-                    data: JSON.stringify(arrayIdOfLetters),
-                    success: function (result) {
-                        var a = result;
+            }
+
+            function sendLetterForDelete()
+            {
+                arrayIdOfLetters.length = 0;
+                $("#SendIdLettersForDelete").on("click", function ()
+                {
+                    $(".CheckForDelete").each(function () {
+                        if ($(this).prop("checked") === true) {
+                            var idLetterForDelete = $(this).attr("name");
+                            arrayIdOfLetters.push(idLetterForDelete);
+                        }
+                    });
+
+                    serializeArrayInJON(arrayIdOfLetters);
+
+                    $.ajax({
+                        url: "@Url.Action("DeleteAllSelected", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType })" + "&NamberOfPeage=" + numberOfPage,
+                        type: "POST",
+                        data:  JSON.stringify(c),
+                        success: function (result) {
+                            var a = result;
                             var wraperTable = $("#table");
                             wraperTable.empty();
-                        wraperTable.html(result);
-                    },
-                    error: function () {
-                        //$("#articleContent").text(response);
-                        alert("error:");
-                    },
+                            wraperTable.html(result);
+
+                            setIventOnPages();
+                            sendLetterForDelete();
+                            setForCheckedAnCheked();
+                            stileForDontRead();
+                            setForDelete();
+                            setForOpen();
+                        },
+                    });
                 });
-            });
+            }
+
+            function serializeArrayInJON(array) {
+                stringJSON = "arrayIdOfLetters: {";
+                array.forEach(function (value, index, arr) {
+                    stringJSON += "[" + index + "]: " + value + ", ";
+                });
+                stringJSON = stringJSON.slice(0, -2);
+                stringJSON += "}";
+                alert(JSON.stringify(stringJSON));
+            }
+
+            function setIventOnPages() {
+                $(".NubmerOfPage").on("click", function () {
+                    numberOfPage = $(this).text();
+                    $.ajax({
+                        url: "@Url.Action("ChangePage", "Message", routeValues: new { numberOfType = ViewBag.NumberOfType })" + "&NamberOfPeage=" + $(this).text(),
+                        type: "GET",
+                        success: function (result) {
+                            var a = result;
+                            var wraperTable = $("#table");
+                            wraperTable.empty();
+                            wraperTable.html(result);
+
+                            setIventOnPages();
+                            sendLetterForDelete();
+                            setForCheckedAnCheked();
+                            stileForDontRead();
+                            setForDelete();
+                            setForOpen();
+                        },
+                    });
+                });
+            }
+
+            setIventOnPages();
+            sendLetterForDelete();
+            setForCheckedAnCheked();
+            stileForDontRead();
+            setForDelete();
+            setForOpen();
         });
-    </script>
+</script>
 }

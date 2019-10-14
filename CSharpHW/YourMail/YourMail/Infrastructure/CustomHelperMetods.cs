@@ -10,11 +10,11 @@ namespace YourMail.Infrastructure
 {
     public static class CustomHelperMetods
     {
-        public static MvcHtmlString MyGrid(this HtmlHelper helper, IEnumerable<ITypesOfLetter> tLetters, string namberPage)
+        public static MvcHtmlString MyGrid(this HtmlHelper helper, IEnumerable<ITypesOfLetter> tLetters, string namberOfPeage)
         {
-            return new MvcHtmlString(MyGrid(tLetters, namberPage));
+            return new MvcHtmlString(MyGrid(tLetters, namberOfPeage));
         }
-        public static string MyGrid( IEnumerable<ITypesOfLetter> tLetters, string namberPage)
+        public static string MyGrid( IEnumerable<ITypesOfLetter> tLetters, string namberOfPeage)
         {
             var arrayHeders = new string[] { "Chek for delete", "Date", "To/From Whom", "Subject", "", "" };
 
@@ -34,17 +34,17 @@ namespace YourMail.Infrastructure
 
             var countLetters = tLetters.Count();
 
-            var remainder = countLetters % 5;
+            var integerDivisors = countLetters / 5;
+
+           var remainder = countLetters % 5;
 
             var caunter = default(int);
 
-            caunter++;
-
-            if (int.TryParse(namberPage, out int intNamberPage))
+            if (int.TryParse(namberOfPeage, out int intNamberPage))
             {
-                if (intNamberPage < remainder)
+                if (intNamberPage < integerDivisors)
                 {
-                    intNamberPage = remainder;
+                    intNamberPage = integerDivisors;
                 }
             }
             else
@@ -54,7 +54,7 @@ namespace YourMail.Infrastructure
 
             foreach (var letter in tLetters)
             {
-                if (caunter > ((intNamberPage - 1) * 5) && caunter < ((intNamberPage - 1) * 5 + 5))
+                if (caunter >= ((intNamberPage - 1) * 5) && caunter < ((intNamberPage - 1) * 5 + 5))
                 {
                     tagTr = new TagBuilder("tr");
 
@@ -105,6 +105,7 @@ namespace YourMail.Infrastructure
 
                     tagTable.InnerHtml += tagTr.ToString();
                 }
+                caunter++;
             }
 
             tagDiv.InnerHtml += tagTable.ToString();
@@ -114,6 +115,7 @@ namespace YourMail.Infrastructure
                 for (var i = 1; i <= ((countLetters - remainder) / 5 + 1); i++)
                 {
                     var tegA = new TagBuilder("a");
+                    tegA.AddCssClass("NubmerOfPage");
                     tegA.SetInnerText(i.ToString());
 
                     tagDiv.InnerHtml += tegA.ToString();
@@ -124,6 +126,7 @@ namespace YourMail.Infrastructure
                 for (var i = 1; i <= ((countLetters - remainder) / 5); i++)
                 {
                     var tegA = new TagBuilder("a");
+                    tegA.AddCssClass("NubmerOfPage");
                     tegA.SetInnerText(i.ToString());
 
                     tagDiv.InnerHtml += tegA.ToString();

@@ -23,7 +23,9 @@ namespace YourMail.Controllers
                 var letter = db.LettersForDB.FirstOrDefault(x => x.Id == letterId);
                 if (letter != null)
                 {
-                    if ((letter.SendLetters.Any(x => x.OrderUser.Id == userId)) || (letter.IncomingLetters.Any(x => x.OrderUser.Id == userId)) || (letter.SendLetters.Any(x => x.OrderUser.Id == userId)))
+                    if ((letter.SendLetters.Any(x => x.OrderUser.Id == userId)) 
+                        || (letter.IncomingLetters.Any(x => x.OrderUser.Id == userId)) 
+                        || (letter.SendLetters.Any(x => x.OrderUser.Id == userId)))
                     {
                         if (letter.FilePuth != null)
                         {
@@ -60,9 +62,8 @@ namespace YourMail.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult DeleteAllSelected(int[] arrayIdOfLetters, int? numberOfType, int? namberOfPeage)
+        public ActionResult DeleteAllSelected( int?[] arrayIdOfLetters, int? numberOfType, int? namberOfPeage)
         {
-
             var listLetters = new List<ITypesOfLetter>();
 
             if (arrayIdOfLetters != null)
@@ -94,14 +95,31 @@ namespace YourMail.Controllers
                                 db.Entry(typeOfLetter).State = EntityState.Deleted;
                             }
                         }
-                        listLetters.AddRange(listTypeOfLetter);
                     }
                     db.SaveChanges();
+                    listLetters = db.listTypesOfLetter[(int)numberOfType].Where(x => x.OrderUser.Id == userId).OrderByDescending(x=>x.Data).ToList();
                 }
             }
             return Content(CustomHelperMetods.MyGrid(listLetters, namberOfPeage.ToString()));
         }
 
+        [Authorize]
+        public ActionResult ChangePage(int? numberOfType, int? namberOfPeage)
+        {
+            var listLetters = new List<ITypesOfLetter>();
+
+            var userId = WebSecurity.CurrentUserId;
+
+            if (numberOfType != null && numberOfType < 3)
+            {
+                using (var db = new DataBaseContext())
+                {
+                    listLetters = db.listTypesOfLetter[(int)numberOfType].Where(x => x.OrderUser.Id == userId).OrderBy(x=>x.Data).ToList();
+                }
+            }
+
+            return Content(CustomHelperMetods.MyGrid(listLetters, namberOfPeage.ToString()));
+        }
 
         [Authorize]
         public ActionResult DeleteLetter(int? letterId, int? numberOfType, int? namberOfPeage)
@@ -174,14 +192,16 @@ namespace YourMail.Controllers
                 using (var db = new DataBaseContext())
                 {
                     var listAllRecidients = GetAllRecipients(letter);
-                    var listToWhomUserProfile = db.UserProfiles.Join(listAllRecidients, x=>x.UserMail, y=>y, (x, y)=>x);
+                    var listToWhomUserProfile = db.UserProfiles.Join(listAllRecidients, x => x.UserMail, y => y, (x, y) => x)
+                                                                    .Include(x => x.IncomingLetters).Include(x => x.SendLetters)
+                                                                    .Include(x => x.SpamLetters).Include(x => x.SpamMeils).ToList();
 
                     var user = db.UserProfiles.FirstOrDefault(x => x.UserMail == User.Identity.Name);
 
                     letter.FromWhom = user.UserMail;
                     letter.Data = DateTime.Now;
 
-                    var letterForDB = CreateNewLetterForDB(letter, user, listAllRecidients.Count, upload);
+                    var letterForDB = CreateNewLetterForDB(letter, user, listToWhomUserProfile.Count, upload);
 
                     db.LettersForDB.Add(letterForDB);
 
@@ -190,16 +210,18 @@ namespace YourMail.Controllers
 
                     foreach(var toWhom in listToWhomUserProfile)
                     {
-
-                        if (toWhom.SpamMeils.Any(x=>x.ToWhomMail != user.UserMail))
+                        if (toWhom.SpamMeils.Count !=0)
                         {
-                            DeleteTypeFoLetterIfCountMoreThenMAX(UserProfile.MaxIncomingLetters, (int)NumberOfTypes.IncomingLetters, db, user);
-                            db.IncomingLetters.Add(CreateTypeOfLetter<IncomingLetter>(letter, toWhom, letterForDB));
+                            if (toWhom.SpamMeils.Any(x => x.ToWhomMail == user.UserMail))
+                            {
+                                DeleteTypeFoLetterIfCountMoreThenMAX(UserProfile.MaxSpamLetters, (int)NumberOfTypes.SpamLetters, db, user);
+                                db.SpamLetters.Add(CreateTypeOfLetter<SpamLetter>(letter, toWhom, letterForDB));
+                            }
                         }
                         else
                         {
-                            DeleteTypeFoLetterIfCountMoreThenMAX(UserProfile.MaxSpamLetters, (int)NumberOfTypes.SpamLetters, db, user);
-                            db.SpamLetters.Add(CreateTypeOfLetter<SpamLetter>(letter, toWhom, letterForDB));
+                            DeleteTypeFoLetterIfCountMoreThenMAX(UserProfile.MaxIncomingLetters, (int)NumberOfTypes.IncomingLetters, db, user);
+                            db.IncomingLetters.Add(CreateTypeOfLetter<IncomingLetter>(letter, toWhom, letterForDB));
                         }
                     }
 
@@ -249,7 +271,7 @@ namespace YourMail.Controllers
                 {
                     if (numberOfType != null && numberOfType < 3 && numberOfType >= 0)
                     {
-                        listLetters = db.listTypesOfLetter[(int)numberOfType].Where(x => x.OrderUser.Id == currentUserId).OrderBy(x => x.Data).ToList();
+                        listLetters = db.listTypesOfLetter[(int)numberOfType].Where(x => x.OrderUser.Id == currentUserId).OrderByDescending(x => x.Data).ToList();
 
                         ViewBag.Title = numberOfType == (int)NumberOfTypes.IncomingLetters ? "Incoming Letters" : numberOfType ==
                                                                (int)NumberOfTypes.SendLetters ? "Send Letters" : "Spam letters";
