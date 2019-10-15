@@ -345,34 +345,9 @@ namespace YourMail.Controllers
 
         public List<string> GetAllRecipients(Letter letter)
         {
-            var listRecipientPerson = new List<string>();
-            var mail = default(string);
-            foreach (char x in letter.ToWhoms)
-            {
-                if (x == ' ' && mail != null)
-                {
-                    if (mail[mail.Length - 1] == ',' || mail[mail.Length - 1] == ';')
-                    {
-                        listRecipientPerson.Add(mail.Substring(0, mail.Length - 1));
-                        mail = default(string);
-                    }
-                    else
-                    {
-                        listRecipientPerson.Add(mail);
-                        mail = default(string);
-                    }
-                }
-                else
-                {
-                    mail += x;
-                }
-            }
-            if (mail != null)
-            {
-                listRecipientPerson.Add(mail);
-                mail = default(string);
-            }
-            return listRecipientPerson = listRecipientPerson.Distinct().ToList(); //delete all repetitions
+            var arrayRecipientPerson = letter.ToWhoms.Split(new Char[] { ' ', ',', ';', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+
+            return arrayRecipientPerson.Distinct().ToList();
         }
     }
 }

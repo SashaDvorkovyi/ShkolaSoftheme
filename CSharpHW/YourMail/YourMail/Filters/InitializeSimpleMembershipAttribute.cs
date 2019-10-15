@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.IO;
 using System.Threading;
 using System.Web.Mvc;
 using WebMatrix.WebData;
@@ -32,6 +33,10 @@ namespace YourMail.Filters
                     using (var context = new DataBaseContext())
                     {
                         //context.Database.Delete();
+                        //if (!Directory.Exists("App_Data"))
+                        //{
+                        //    Directory.CreateDirectory("App_Data");
+                        //}
                         if (!context.Database.Exists())
                         {
                             ((IObjectContextAdapter)context).ObjectContext.CreateDatabase();
